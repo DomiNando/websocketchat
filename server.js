@@ -36,6 +36,17 @@ var util = {
     
     sendMessage: function(connection, message) {
         connection.write(JSON.stringify(message));
+    },
+    
+    getUser: function(connection) {
+        for (var user in users) {
+            if (users[user].userconnection == connection) {
+                console.log("[returning user] ", users[user].userName);
+                return users[user].userName;
+            }
+        }
+        
+        return false;
     }
 };
 var sockjs_opts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js"};
@@ -101,7 +112,8 @@ chat_server.on('connection', function(connection) {
                             var userId = userName + "" + connection.remotePort;
                             users[userName] = {
                                 userconnection: connection,
-                                id: userId
+                                id: userId,
+                                userName: userName
                             };
                             
                             console.log(users[userName].userconnection);
@@ -149,7 +161,7 @@ chat_server.on('connection', function(connection) {
                                 "event": "message",
                                 "data": {
                                     "message" : responseMessage,
-                                    "userName" : connection.userName
+                                    "userName": connection.userName
                                 }
                             };
                             if (conn) {
@@ -179,7 +191,23 @@ chat_server.on('connection', function(connection) {
                                     "userId": destination.id
                                 }
                             };
+                            
                             util.sendMessage(connection, response);
+                            
+                            if (data.newChat) {
+                                var name = util.getUser(connection);
+                                
+                                console.log("[user connection] ", name);
+                                var message = {
+                                    "event": "new chat",
+                                    "data" : {
+                                        "destination": name
+                                    }
+                                };
+                                
+                                var conn = users[dest].userconnection;
+                                util.sendMessage(conn, message);
+                            }
                         } else {
                             util.sendError(connection, 400, "Server couldn't process request");
                         }
