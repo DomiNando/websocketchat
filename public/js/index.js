@@ -16,7 +16,7 @@ var myUserName;
 
 var destinationId;
 
-var server = 'http://websocketchat-c9-henryorrin.c9.io/chat';
+var server = 'http://websocket-chat-c9-erreh.c9.io/chat';
 
 var chat = {
     start: function () {
