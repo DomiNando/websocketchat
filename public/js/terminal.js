@@ -46,7 +46,6 @@ var chat = {
             switch (event) {
                 case "user ok":
                     $login.hide();
-                    $chatRequest.show();
                     break;
                 case "request ok":
                     $chatRequest.hide();

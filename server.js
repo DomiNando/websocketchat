@@ -228,7 +228,7 @@ chat_server.on('connection', function(connection) {
             var userConnection = users[user].userconnection;
             if (connection === userConnection) {
                 console.log("[user deleted] ", users[user].id); 
-                delete users.user;
+                delete users[user];
             } else {
                 console.log("[no user deleted]");
             }
