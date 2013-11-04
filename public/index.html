@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+        <head>
+                <link href="chat.css" rel="stylesheet">
+        </head>
+        <body>
+            <section id="login">
+                    <p id="message"></p>
+                    <label>UserName</label><input id="userName" type="text">
+                    <button id="submit">Submit</button>
+            </section>
+            <section id="chatRequest">
+                <input id="request" type="text"></input>
+                <button id="requestButton">Start Chat</button>
+            </section>
+            <section id="chat">
+                <div id="chatwindow">
+                	<div id="messagewindow">
+                   		<div id="messages"></div>
+                    </div>
+                </div>
+                <div id="inputcontainer">    
+                    <input type="text" id="errand"></input>
+                    <button id="send">Send</button>
+                    <button id="closeChat">Close Chat</button>
+                </div>
+            </section>
+        </body>
+        <script src="//cdn.sockjs.org/sockjs-0.3.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="/js/index.js"></script>
+</html>

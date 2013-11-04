@@ -1,0 +1,47 @@
+body {
+    width: 100%;
+    height: 100%;
+}
+
+section {
+    display: none;
+}
+
+#chatwindow{
+    position:relative;
+    height:400px; /* if you wish to use all of your space, use
+    position:absolute; top:0;left:0;right:0;bottom:0;
+    or drop the chatdwindow div */
+}
+#messagewindow, #inputcontainer{
+    position:absolute;
+    left:0;
+    right:0;
+    border:1px solid #000;
+}
+#messagewindow{   
+    overflow: scroll;
+    bottom: 0;
+    height: 100%;
+    width: 90%;
+    margin: 0 auto;
+    position: absolute;
+}
+#inputcontainer{
+    display:block;
+    bottom:0;
+    height:1em;
+    padding:0.5em;
+    margin-top:1em;
+    position: fixed;
+    margin-bottom: 1em;
+}
+
+#inputcontainer > p{
+    margin:0;
+}
+
+#chat {
+    width: 100%;
+    height: 100%;
+}

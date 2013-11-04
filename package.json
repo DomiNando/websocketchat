@@ -1,0 +1,11 @@
+{
+	"name": "chat",
+	"version": "0.1.0",
+	"main": "server.js",
+	"description": "A small chat server using node.js with sockjs",
+	"README": "README.md",
+	"dependencies": {
+		"sockjs": "latest",
+		"express": "latest"
+	}
+}

@@ -1,0 +1,75 @@
+/**
+* Messages the server can send
+* Officially messaging api all clients must obey.
+*/
+
+// message to client
+{
+    "event" :"message",
+    "data" : {
+        "message" : "Message goes here",
+        "userName" : "userName of sender goes here"
+    }
+}
+
+
+// When username available send ok message to client
+{
+    "event" : "user ok",
+    "data" : {
+        "userId": ""
+    }
+}
+
+// when chat request is accepted
+{
+    "event" : "request ok"
+}
+
+
+// When username not available send fail message to client
+{
+    "event" : "user not ok",
+    "data" : {
+        "errorMessage": ""
+    }
+}
+
+{
+    "event": "error",
+    "data" : {
+        "errorCode": "000",
+        "errMessage": ""
+    }
+}
+
+/**
+* Messages the client can send
+*/
+
+
+// Request to create new user
+{
+    "event": "new user",
+    "data" : {
+        "userName": "user",             // when using phone whe leave this blank, sever takes care of naming user.
+        "phoneNumber": "0123456789"     // optinal when using browser client, mandatory when using phone.
+    }
+}
+
+{
+    "event": "message",
+    "data": {
+        "message": ""
+    }
+}
+
+
+// event client must send to begin chat
+// client chooses destination of chat messages
+{
+    "event" : "requestChat",
+    "data" : {
+        "destination": "userName of destination"
+    }
+}

@@ -1,0 +1,25 @@
+var message = JSON.parse(request);
+		var eventType = message.event;
+		console.log("Event Type: ": eventType)
+		
+		switch (eventType) {
+		    case "new user":
+		        break;
+		    case "message":
+		        break;
+            case "requestChat":
+                break;
+            default:
+                var errorCode = 400;
+                var errorMessage = "Sever couldn't process request";
+                message = {
+                    "event": "error",
+                    "data": {
+                        "errorCode": errorCode,
+                        "errMessage": errorMessage
+                    }
+                };
+                
+                connection.write(JSON.stringify(message));
+                break;
+		}
