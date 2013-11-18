@@ -16,14 +16,14 @@ ChatView.extend({
 ChatView.proto({
     bindEventHandlers: function() {
 
-        $('#submit').on('click',function(e) {
+        /*$('#submit').on('click',function(e) {
             var message = $('#input input').val();
 
             if (message !== '') {
                 this.emit('message-send', message);
                 this.clearInput();
             }
-        }.bind(this));
+        }.bind(this));*/
 
         $('#input input').on('keyup', function(e) {
             var message = $.trim($(e.target).val());

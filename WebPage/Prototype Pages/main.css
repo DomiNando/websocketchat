@@ -60,26 +60,23 @@
 
 .message {
     list-style-type: none;
-    width: 90%;
-    float: left;
+    width: 100%
     background: #e74c3c;
     margin: 5px 2px;
     border-radius: 25px;
     padding: 5px; 
-    margin-left: -12%;
     color:  #000;
     font-family: 'Varela Round', sans-serif;
     font-size: small;
+    clear: both;	
+    word-break:break-all;
 } 
 .external {
     background-color: #bdc3c7;
     float: right;
 } 
 .own {
-    float: right;
     background: #e67e22;
-    margin-left: 0;
-    margin-right: 5%;
 
 }
 

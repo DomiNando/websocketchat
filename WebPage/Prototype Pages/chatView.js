@@ -16,14 +16,14 @@ ChatView.extend({
 ChatView.proto({
     bindEventHandlers: function() {
 
-        $('#submit').on('click',function(e) {
+        /*$('#submit').on('click',function(e) {
             var message = $('#input input').val();
 
             if (message !== '') {
                 this.emit('message-send', message);
                 this.clearInput();
             }
-        }.bind(this));
+        }.bind(this));*/
 
         $('#input input').on('keyup', function(e) {
             var message = $.trim($(e.target).val());
@@ -39,9 +39,9 @@ ChatView.proto({
             this.minimize();
         }.bind(this));
 
-        $('#close-chat').on('click', function() {
+        /*$('#close-chat').on('click', function() {
             this.hide();
-        }.bind(this));
+        }.bind(this));*/
 
         window.onhashchange = function() {
             this.emit('statechange', this.getState());
@@ -76,11 +76,15 @@ ChatView.proto({
         $('#input input').val('');
     },
 
-    'getState': function() {
+    getState: function() {
         return window.location.hash.replace('#/', '') || 'all';
     },
 
-    'setActiveRoute': function(route) {
+    setActiveRoute: function(route) {
         $('#filters a').removeClass('selected').filter('[href="#/' + route + '"]').addClass('selected');
+    },
+    
+    flash: function() {
+    	document.title = 'new message' + document.title;
     }
 });
