@@ -1,0 +1,17 @@
+extends layout
+
+block content
+    h=title
+    
+    div 
+        table(border='1')
+            tr
+                td Name
+                td Email
+            -for (var row in rows)
+                -var row=rows[row]
+                tr
+                    td 
+                        a(href='/viewDetailUser/#{row.username}') #{row.name}
+                    td #{row.email}
+

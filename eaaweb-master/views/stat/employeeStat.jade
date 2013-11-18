@@ -1,0 +1,47 @@
+
+extends layout
+
+block content
+
+    h=title
+    
+    div 
+        table(border='1')
+            tr                                
+                td Emergency Type       
+                    -for(var index in emergencyType)
+                        td #{emergencyType[index].emergencyType}
+            tr                                                 
+                td total
+                    -for(var index in total)
+                        td #{total[index]}  
+            tr  
+                td averageTime                
+                    -for(var index in averageTime)
+                        td #{averageTime[index]}  
+            tr  
+                td outside              
+                    -for(var index in outside)
+                        td #{outside[index]}  
+            tr      
+                td resolved                               
+                    -for(var index in resolved)
+                        td #{resolved[index]}  
+            tr  
+                td hasApplication                                   
+                    -for(var index in hasApplication)
+                        td #{hasApplication[index]}
+            tr                                
+                td        
+                    -for(var index in emergencyType)
+                        td 
+                            a(href='/employeeResult/?agencyPhoneNumber=#{agencyPhoneNumber}'+
+                                    '&emergencyType=#{emergencyType[index].emergencyType}'+
+                                    '&username=#{username}') view                                                  
+    div
+        form(name='employeeStat' action='/employeeStat' method='GET')
+            input(type='hidden' name='agencyPhoneNumber' value='#{agencyPhoneNumber}')
+            select(name='username')
+                -for(var index in employee)
+                    option(value='#{employee[index].username}') #{employee[index].username}                               
+            input(type='submit' value='employee stat') 

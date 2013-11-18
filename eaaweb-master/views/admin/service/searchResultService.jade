@@ -1,0 +1,18 @@
+extends layout
+
+block content
+    h=title
+    
+    div 
+        table(border='1')
+            tr
+                td Company Name
+                td Category
+            -for (var row in rows)
+                -var row=rows[row]
+                tr
+                    td 
+                        a(href='/viewDetail?agencyPhoneNumber=#{row.agencyPhoneNumber}'+
+                                '&category=#{row.category}') #{row.agencyName}
+                    td #{row.category}
+

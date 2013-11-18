@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Name       : Breakeven 
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20130509
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Add Service</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Abel|Satisfy' rel='stylesheet' type='text/css'>
+    <link href="/stylesheets/styleFinal.css" rel="stylesheet" type="text/css" media="screen" />
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+
+    <script>
+        var countA = 0;
+        var countP = 0;
+        var str = ["altA1", "altA2", "altA3", "altA4"];
+        var str2 = ["altP1", "altP2"];
+
+        //<!-----------TRANSFORMS a String Object to a JSON Object--------->
+        $.fn.serializeObject = function()
+        {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+
+        $(window).load( function() {
+            $("#altA1").hide();
+            $("#altA2").hide();
+            $("#altA3").hide();
+            $("#altA4").hide();
+            $("#altP1").hide();
+            $("#altP2").hide();
+
+        });
+        //<!-----------------------Adds new field to alternative Areas---------------------------->
+        $(function() {
+            $("#moreA").click(function(){
+
+                if( countA == 4){
+                    $("#moreA").attr("disabled", true);
+                    $("#lessA").attr("disabled", false);
+                }
+                if( countA < 4){
+                    $('#'+str[countA]).show();
+                    countA = countA + 1;
+                    $("#lessA").attr("disabled", false);
+                }
+
+            });
+        });
+        <!------------------Reduces fields of alternative Areas----------------------------->
+        $(function() {
+            $("#lessA").click(function(){
+
+                if( countA == 0){
+                    $("#lessA").attr("disabled", true);
+                    $("#moreA").attr("disabled", false);
+                }
+                if( countA > 0){
+                    $('#'+str[countA-1]).hide();
+                    countA = countA - 1;
+                    $("#moreA").attr("disabled", false);
+                }
+
+            });
+        });
+
+        //<!-----------------Adds fields to alternative Phones--------------------------------->
+        $(function() {
+            $("#moreP").click(function(){
+
+                if( countP == 2){
+                    $("#moreP").attr("disabled", true);
+                    $("#lessP").attr("disabled", false);
+                }
+                if( countP < 2){
+                    $('#'+str2[countP]).show();
+                    countP = countP + 1;
+                    $("#lessP").attr("disabled", false);
+                }
+
+            });
+        });
+        //<!---------------Reduces fields of alternative Phones------------------->
+        $(function() {
+            $("#lessP").click(function(){
+
+                if( countP == 0){
+                    $("#lessP").attr("disabled", true);
+                    $("#moreP").attr("disabled", false);
+                }
+                if( countP > 0){
+                    $('#'+str2[countP-1]).hide();
+                    countP = countP - 1;
+                    $("#moreP").attr("disabled", false);
+                }
+
+            });
+        });
+
+        <!----------------------------Adds a new Service to the system-------------------------->
+
+        $(function(){
+            $("#add").click(function(){
+                var JSONObject = JSON.stringify($("#addService").serializeObject());
+
+                if(JSON.parse(JSONObject).agencyName =="" || JSON.parse(JSONObject).category =="" || JSON.parse(JSONObject).altArea0 =="" || JSON.parse(JSONObject).altPhoneNumber0 =="" || JSON.parse(JSONObject).city =="" || JSON.parse(JSONObject).state =="" ||  JSON.parse(JSONObject).country =="" ){
+                    alert("Please fill all the fields to add a new service to the system");
+                    return false;
+                }
+                else{
+
+                    $.ajax({
+                        type: "POST",
+                        url :"/newService",
+                        contentType: "application/json",
+                        data:JSONObject,
+                        success : function(data) {
+                            alert(data.result);
+                            $("#addService").trigger("reset");
+                        },
+                        error: function(data){
+                            alert(data.result);
+                        }
+                    });
+
+                    alert("A new service has been added to the system with information "+JSONObject);
+                    $("#addService").trigger("reset");
+                }
+                return false;
+            });
+        });
+    </script>
+
+</head>
+<body>
+<div id="wrapper">
+    <div id="header-wrapper">
+        <div id="header" class="container">
+            <div id="logo">
+                <h1><a>Admin Home</a></h1>
+            </div>
+            <div id="menu">
+                <ul>
+                    <li><a href="http://localhost:63342/Pages/Admin Home Prototype.html">Home</a></li>
+                    <li><a href="http://localhost:63342/Pages/Add User Prototype.html">Add User</a></li>
+                    <li class="current_page_item"><a>Add Service</a></li>
+                    <li><a href="http://localhost:63342/Pages/Login Prototype.html">Log out</a></li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- end #header -->
+    <div id="page">
+
+
+        <div id="content1">
+            <div class="post">
+                <h2 id="greeting" class="title">New Service</h2>
+                <div class="entry">
+                    <form id="addService" action="" method="post">
+                        <h3>Agency Name:<input type="text"  name="agencyName" maxlength="50" size="50" required/></h3><br>
+                        <h3>Category:<input type="text"  name="category" maxlength="40" size="30" required/></h3><br>
+                        <h3 id="altA0">Area:<input type="text" name="altArea0" maxlength="40" size="30" required/></h3><button type="button" id="moreA">Add Field</button><button type="button" id="lessA" disabled>Less Fields</button>
+                        <h3 id="altA1">Alternate Area:<input type="text"  name="altArea1"/></h3>
+                        <h3 id="altA2">Alternate Area:<input type="text"  name="altArea2"/></h3>
+                        <h3 id="altA3">Alternate Area:<input type="text"  name="altArea3"/></h3>
+                        <h3 id="altA4">Alternate Area:<input type="text"  name="altArea4"/></h3>
+                        <h3 id="altP0">Telephone:<input type="email"  name="altPhoneNumber0" maxlength="10" size="10" required/></h3><button type="button" id="moreP">Add Field</button><button type="button" id="lessP" disabled>Less Fields</button><br>
+                        <h3 id="altP1">Alternate Telephone1:<input type="email"  name="altPhoneNumber1" maxlength="10"size="10"/></h3><br>
+                        <h3 id="altP2">Alternate Telephone2:<input type="email"  name="altPhoneNumber2" maxlength="10"size="10"/></h3>
+                        <h3>City:<input type="text"  name="city" maxlength="40" size="30" required/></h3><br>
+                        <h3>State:<input type="text"  name="state" maxlength="2" size="3" required/></h3><br>
+                        <h3>Country<input type="text"  name="country" maxlength="40" size="30" required/></h3><br><br>
+                    </form>
+
+
+
+                    <p>
+                        <button id="add" type="button" class="more" form="main">Add</button>
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <!-- end #content -->
+
+
+
+
+        <!-- end #sidebar -->
+        <div style="clear: both;">&nbsp;</div>
+    </div>
+    <!-- end #page -->
+
+</div>
+<div id="footer">
+    <p>Copyright (c) 2013 Sitename.com. All rights reserved. Images by <a href="http://fotogrph.com/">Fotogrph</a>. Design by <a href="http://www.freecsstemplates.org/" rel="nofollow">FreeCSSTemplates.org</a>.</p>
+</div>
+<!-- end #footer -->
+</body>
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Name       : Breakeven 
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20130509
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>Admin Home</title>
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css" />
+<link href='http://fonts.googleapis.com/css?family=Abel|Satisfy' rel='stylesheet' type='text/css'>
+<link href="/stylesheets/styleFinal.css" rel="stylesheet" type="text/css" media="screen" />
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+
+<script>
+//<!-----------TRANSFORMS a String Object to a JSON Object--------->
+$.fn.serializeObject = function()
+{
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
+<!-------------------Search for an Employee or Service-------------------------------------->
+$(function(){
+    $("#go").click(function(){
+
+
+        var JSONObject = JSON.stringify($("#main").serializeObject());
+
+        if(JSON.parse(JSONObject).searchText == ""){
+            alert("Please fill in the search field to do the search. Don't forget to choose a filter for each category to make a better search");
+            return false;
+        }
+        if(typeof JSON.parse(JSONObject).searchType == "undefined" ){
+            alert("Please select Service or Employee");
+            return false;
+        }
+        if(typeof JSON.parse(JSONObject).searchCriteria == "undefined" ){
+            alert("Please select Agency Name or Telephone");
+            return false
+        }
+
+
+        $.ajax({
+            type: "GET",
+            url :"/searchResult",
+            contentType: "application/json",
+            data:"searchText="+JSON.parse(JSONObject).searchText+"&searchType="+JSON.parse(JSONObject).searchType+"&searchCriteria="+JSON.parse(JSONObject).searchCriteria,
+            success : function(data) {
+
+                if( data != ""){
+
+                    $(".entry").css("display", "none");
+                    $(".entry1").css("display", "inline");
+                    $("#go").attr("disabled", true);
+                    $("#main").trigger("reset");
+
+                    var limit = data.length;
+                    var i;
+
+                    if(typeof data[0].agencyPhoneNumber != "undefined"){
+                        for(i = 0; i < limit; i++){
+
+                            var texto = data[i].agencyPhoneNumber+","+data[i].agencyName+","+data[i].category;
+
+                            var radioBtn = $('<input type="radio" name="active" value="'+ data[i].agencyPhoneNumber+","+data[i].agencyName+","+data[i].category+',agency">'+texto+'</input><br>');
+                            $('#results').append(radioBtn);
+                        }
+                    }else{
+                        for(i = 0; i < limit; i++){
+
+                            var texto = data[i].username+","+data[i].name+","+data[i].email;
+
+                            var radioBtn = $('<input type="radio" name="active" value="'+ data[i].username+","+data[i].name +","+data[i].email+ ',employee">'+texto+'</input><br>');
+                            $('#results').append(radioBtn);
+                        }
+                    }
+
+                }else{
+                    alert("There is no information for that search");
+                }
+
+            },
+            error: function(data){
+                alert("error");
+            }
+        });
+
+
+
+
+
+
+    });
+});
+//<!------------------------------------------Go back---------------------------------------->
+
+$(function(){
+    $("#goBack3").click(function(){
+        $(".entry").css("display", "inline");
+        $(".entry1").css("display", "none");
+        $("#go").attr("disabled", false);
+
+        return false;
+    });
+});
+
+//<!-------------------------View Details of an Employee or Service from DB------------------>
+$(function(){
+    $("#details").click(function(){
+
+        var JSONObject = JSON.stringify($("#mainResults").serializeObject());
+
+        if(JSON.parse(JSONObject).active != ""){
+
+            var sendData = JSON.parse(JSONObject).active.split(",");
+
+            if(sendData[3] == "employee"){
+
+                $.ajax({
+                    type: "GET",
+                    url :"/viewDetailUser",
+                    contentType: "application/json",
+                    data: "username="+sendData[0],
+                    success : function(data) {
+                        $("#sidebar1").css("display","none");
+                        $("#sidebar2").css("display","inline");
+
+                        $("#un").html(data.name);
+                        $("#u").html(data.username);
+                        $("#p").html(data.password);
+                        $("#em").html(data.email);
+                        $("#ut").html(data.role);
+                        $("#ucpn").html(data.agencyPhoneNumber);
+
+                    },
+                    error: function(data){
+                        alert("error user edit");
+                    }
+                });
+            }else{
+                $.ajax({
+                    type: "GET",
+                    url :"/viewDetail",
+                    contentType: "application/json",
+                    data: "agencyPhoneNumber="+sendData[0],
+                    success : function(data) {
+                        $("#sidebar1").css("display","none");
+                        $("#sidebar3").css("display","inline");
+
+                        $("#an").html(data.detail.agencyName);
+                        $("#c").html(data.detail.category);
+                        $("#a").html(data.area[0].altArea);
+
+                        var count = data.area.length;
+                        var i = 1;
+                        if(count > 1){
+                            for(i = 1; i < count; i++){
+                                $("#altArea").append('<li>Alternate Area:<h3 id="altA' + i + '"></h3></li>');
+                                $("#altA"+i).html(data.area[i].altArea);
+                            }
+                        }
+                        $("#t").html(data.phone[0].altPhoneNumber);
+                        count = data.phone.length;
+                        var p = 1;
+                        if(count > 1){
+                            for(p = 1; p < count; p++){
+                                $("#altPhone").append('<li>Alternate Phone:<h3 id="altP' + p + '"></h3></li>');
+                                $("#altP"+p).html(data.phone[p].altPhoneNumber);
+                            }
+                        }
+                        $("#ci").html(data.detail.city);
+                        $("#s").html(data.detail.state);
+                        $("#co").html(data.detail.country);
+
+
+                    },
+                    error: function(data){
+                        alert("error service edit");
+                    }
+                });
+            }
+        }else{
+            alert("Please select a search result");
+            return false;
+        }
+
+    });
+});
+//<!----------------------------------------------Edits an Employee--------------------------------->
+$(function(){
+    $("#editUser").click(function(){
+
+        var JSONObject = JSON.stringify($("#mainResults").serializeObject());
+
+        if( JSON.parse(JSONObject).active != ""){
+
+            var sendData = JSON.parse(JSONObject).active.split(",");
+
+            window.location.replace("/editUser?username="+sendData[0]);
+
+        }
+        else{
+            alert("Please select an employee to edit");
+            return false;
+        }
+
+
+        $(".entry").css("display", "inline");
+        $(".entry1").css("display", "none");
+        $("#go").attr("disabled", false);
+    });
+});
+
+
+//<!-------------------------------------------Edits a Service---------------------------------------->
+$(function(){
+    $("#editService").click(function(){
+        var JSONObject = JSON.stringify($("#mainResults").serializeObject());
+
+        if( JSON.parse(JSONObject).active != ""){
+            var sendData = JSON.parse(JSONObject).active.split(",")
+
+            window.location.replace("/edit?agencyPhoneNumber="+sendData[0]);
+        }
+        else{
+            alert("Please select a service to edit");
+            return false;
+        }
+        $(".entry").css("display", "inline");
+        $(".entry1").css("display", "none");
+        $("#go").attr("disabled", false);
+    });
+});
+
+//<!-------------------------------------------Deletes a User-------------------------------------------------->
+
+$(function(){
+    $("#deleteUser").click(function(){
+        var JSONObject = JSON.stringify($("#mainResults").serializeObject());
+
+        if(JSON.parse(JSONObject).active != ""){
+
+            var rawData = JSON.parse(JSONObject).active.split(",");
+            var sendData = JSON.stringify({"username":rawData[0]});
+
+            $.ajax({
+                type: "POST",
+                url :"/deleteUser",
+                contentType: "application/json",
+                data: sendData,
+                success : function(data) {
+                    alert("User successfully deleted");
+
+                },
+                error: function(data){
+                    alert("error user delete");
+                }
+            });
+        }else{
+            alert("Please select a search result");
+            return false;
+        }
+    }) ;
+});
+
+
+//<!-------------------------------------------Deletes a Service-------------------------------------------------->
+
+$(function(){
+    $("#deleteService").click(function(){
+        var JSONObject = JSON.stringify($("#mainResults").serializeObject());
+
+        if(JSON.parse(JSONObject).active != ""){
+
+            var rawData = JSON.parse(JSONObject).active.split(",");
+            var sendData = JSON.stringify({"currentAltPhoneNumber":rawData[0]});
+
+            $.ajax({
+                type: "POST",
+                url :"/delete",
+                contentType: "application/json",
+                data: sendData,
+                success : function(data) {
+                    alert("Service successfully deleted");
+
+                },
+                error: function(data){
+                    alert("error service delete");
+                }
+            });
+        }else{
+            alert("Please select a search result");
+            return false;
+        }
+    }) ;
+});
+
+//<!-------------------------------------------Takes the page to its original state---------------------------->
+$(function(){
+    $("#goBack1").click(function(){
+
+        $("#sidebar1").css("display","inline");
+        $("#sidebar2").css("display","none");
+        $(".entry").css("display", "inline");
+        $(".entry1").css("display", "none");
+        $("#go").attr("disabled", false);
+    });
+});
+
+$(function(){
+    $("#goBack2").click(function(){
+
+        $("#sidebar1").css("display","inline");
+        $("#sidebar3").css("display","none");
+        $(".entry").css("display", "inline");
+        $(".entry1").css("display", "none");
+        $("#go").attr("disabled", false);
+    });
+});
+
+
+</script>
+
+</head>
+<body>
+<div id="wrapper">
+    <div id="header-wrapper">
+        <div id="header" class="container">
+            <div id="logo">
+                <h1><a>Admin Home</a></h1>
+            </div>
+            <div id="menu">
+                <ul>
+                    <li class="current_page_item"><a>Home</a></li>
+                    <li><a href="/newUser">Add User</a></li>
+                    <li><a href="/newService">Add Service</a></li>
+                    <li><a href="http://localhost:63342/Pages/Login Prototype.html">Log out</a></li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- end #header -->
+    <div id="page">
+        <div id="content">
+            <div class="post">
+                <h2 id="greeting" class="title">Search</h2>
+
+                <div class="entry">
+                    <form id="main" action="" method="get">
+                        <h3><input type="text" id="busqueda" name="searchText" maxlength="40" size="30" required/></h3><br>
+
+                        <p>
+                            <button id="go" type="button" class="more">Go!</button>
+                        </p>
+                    </form>
+                </div>
+
+                <div class="entry1">
+                    <form id="mainResults" action="" method="post">
+
+                        <div id="results" class="containerHistory">
+
+                        </div><br>
+
+                        <p>
+                            <button id="details" type="button" class="more">View Details</button>
+                            <button id="goBack3" type="button" class="more">Go Back</button>
+
+                        </p>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <!-- end #content -->
+        <div id="sidebar1">
+            <ul>
+                <li>
+                    <h2><strong>Filters</strong></h2>
+                    <ul>
+                        <h1>Search for</h1>
+                        <li><input id="searchFor1" type="radio" name="searchType" value="service" form="main">Service</input><input id="searchFor2" type="radio" name="searchType" value="employee" form="main">Employee</input> </li>
+                        <h1>Search Using:</h1>
+                        <li><input id="searchC1" type="radio" name="searchCriteria" value="agencyName" form="main">Agency Name</input><input id="searchC2" type="radio" name="searchCriteria" value="telephone" form="main">Telephone</input> </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div id="sidebar2">
+            <ul>
+                <li>
+                    <h2>User Information</h2>
+                    <ul>
+                        <li>Name:<h3 id="un"></h3> </li>
+                        <li>Username:<h3 id="u"></h3></li>
+                        <li>Password:<h3 id="p"></h3></li>
+                        <li>E-mail:<h3 id="em"></h3></li>
+                        <li>UserType:<h3 id="ut"></h3></li>
+                        <li>Company Phone Number: <h3 id="ucpn"></h3></li>
+                        <button id="editUser" type="button" class="more">Edit User</button>
+                        <button id="deleteUser" type="button" class="more">Delete User</button>
+                        <button id="goBack1" type="button" class="more">Back to Search</button>
+
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div id="sidebar3">
+            <ul>
+                <li>
+                    <h2>Service Information</h2>
+                    <ul>
+                        <li>Agency Name:<h3 id="an"></h3> </li>
+                        <li>Category:<h3 id="c"></h3></li>
+                        <li>Area:<h3 id="a"></h3></li>
+                        <div id="altArea"></div>
+                        <li>Telephone:<h3 id="t"></h3></li>
+                        <div id="altPhone"></div>
+                        <li>City:<h3 id="ci"></h3></li>
+                        <li>State:<h3 id="s"> </h3></li>
+                        <li>Country:<h3 id="co"></h3></li>
+                        <button id="editService" type="button" class="more">Edit Service</button>
+                        <button id="deleteService" type="button" class="more">Delete Service</button>
+                        <button id="goBack2" type="button" class="more">Back to Search</button>
+
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <!-- end #sidebar -->
+        <div style="clear: both;">&nbsp;</div>
+    </div>
+    <!-- end #page -->
+
+</div>
+<div id="footer">
+    <p>Copyright (c) 2013 Sitename.com. All rights reserved. Images by <a href="http://fotogrph.com/">Fotogrph</a>. Design by <a href="http://www.freecsstemplates.org/" rel="nofollow">FreeCSSTemplates.org</a>.</p>
+</div>
+<!-- end #footer -->
+</body>
+</html>

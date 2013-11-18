@@ -1,0 +1,44 @@
+
+doctype 5
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')        
+  body
+    h=title    
+    div
+        form(name="clientEmergency" action="/clientEmergency" method="get")
+            div
+                br
+                input(type='submit' name='newClientEmergency' value='New Emergency')
+    div
+        form(name="history" action="/history" method="get")
+            div
+                br
+                |Agency Phone Number
+                input(type='text' name='agencyPhoneNumber' value='')
+                |Time
+                input(type='text' name='time' value='')
+            
+                input(type='submit' name='searchHistory' value='Search History')
+    div
+        form(name="EmergencyRelay" action="/emergencyRelay" method="get")
+            div
+                br
+                input(type='submit' name='emergencyRelay' value='Relay Emergency')
+    div
+        form(name="retrieveRelay" action="/retrieveRelay" method="get")
+            div
+                br
+                |Client Phone Number
+                input(type='text' name='clientPhoneNumber' value='')
+            
+                input(type='submit' name='retrieve' value='Retrieve Relay')
+    div
+        form(name="retrieveCoordinate" action="/retrieveCoordinate" method="get")
+            div
+                br
+                |Client Phone Number
+                input(type='text' name='clientPhoneNumber' value='')
+            
+                input(type='submit' name='retrieve' value='Retrieve Coordinate')

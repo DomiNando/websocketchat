@@ -1,0 +1,64 @@
+
+doctype 5
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')        
+  body
+    h=title    
+    div
+        form(name="" action="" method="")            
+            div
+                br
+                |Client Phone Number  
+                input(type='text' name='clientPhoneNumber' value='#{data.clientPhoneNumber}')
+            div 
+                |Time
+                input(type='text' name='time' value='#{data.time}')
+            div
+                |Resolved
+                input(type="text" name="resolved" value='#{data.resolved}') 
+            div
+                |Emergency Type
+                input(type='text' name='emergencyType' value='#{data.emergencyType}')
+            div
+                |Emergency Detail
+                input(type='text' name='emergencyDetail' value='#{data.emergencyDetail}')
+            div
+                |Client Name           
+                input(type='text' name='clientName' value='#{data.clientName}')
+            div
+                |Client Address
+                input(type='text' name='clientAddress' value='#{data.clientAddress}')
+            div   
+                |Emergency Location
+                input(type='text' name='emergencyLocation' value='#{data.emergencyLocation}')
+            div
+                |Outside Home
+                input(type="text" name="outsideHome" value='#{data.outsideHome}') 
+            div
+                |Agency Phone Number
+                input(type='text' name='agencyPhoneNumber' value='#{data.agencyPhoneNumber}')
+            div
+                |Attended By
+                input(type='text' name='attendedBy' value='#{data.attendedBy}')
+            div
+                |Time Completed
+                input(type='text' name='timeCompleted' value='#{data.timeCompleted}')
+            div
+                |Time Elapsed
+                input(type='text' name='timeElapsed' value='#{data.timeElapsed}')
+            div
+                |Has Application
+                input(type="text" name="hasApplication" value="#{data.hasApplication}") 
+
+            -for (var index=0; index < transfer.length; index++)
+                br
+                |Transfer ##{index + 1}
+                div                                       
+                    |Old Agency Phone Number
+                    input(type='text' name='' value='#{transfer[index].oldAgencyPhoneNumber}')
+                div
+                    |Reason
+                    input(type='text' name='' value='#{transfer[index].reason}')
+
