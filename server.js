@@ -58,14 +58,17 @@ var http_server = http.createServer(server);
 var chat_server = sockjs.createServer(sockjs_opts);
 
 chat_server.installHandlers(http_server, { prefix: '/chat' });
-http_server.listen(process.env.PORT || 3000);
+http_server.listen(process.env.PORT || 3000); // para correr en localhost no hay que hacer cambios aqui,
+                                              // solo correr node server.js y cambiar el destino del cliente
+                                              // a http://localhost:3000/chat
 
 // this server just serves up static content
 server.use(express.compress()); // we compress the static content for up to one day
-server.use('/', express.static(__dirname + '/public'/*, { maxAge: oneDay }*/));
+server.use('/', express.static(__dirname + '/public', { maxAge: oneDay }));
 
 // main chat code is here
 var users = {};
+var user_timeouts = [];
 chat_server.on('connection', function(connection) {
         console.log("[new connection]", connection.remoteAddress);
         console.log("[port] ", connection.remotePort);
@@ -212,6 +215,35 @@ chat_server.on('connection', function(connection) {
                             util.sendError(connection, 400, "Server couldn't process request");
                         }
                         break;
+                    case "login":
+                        // check if this user was loged in before
+                        if (data.phonenumber) {
+                            // if (data.username && users[data.username]) {
+                            //     users[data.username].userconnection = connection;
+                            // } else {
+                            //     var userId = data.username + "" + connection.remotePort;
+                            //     users[data.username] = {
+                            //         userconnection: connection,
+                            //         id: userId,
+                            //         userName: data.username
+                            //     };
+                            // }
+                            if (users[data.phonenumber]) {
+                                clearTimeout(user_timeouts[data.phonenumber]);
+                                users[data.phonenumber].userconnection = connection;
+                            } else {
+                                // let's register this guy!
+                                users[data.phonenumber] = {
+                                    userconnection: connection,
+                                    id: data.phonenumber + "" + connection.remotePort,
+                                    userName: data.phonenumber
+                                };
+                            }
+
+                        } else {
+                            util.sendError(connection, 406, "malformated");
+                        }
+                        break;
                     default:
                         util.sendError(connection, 400, "Server couldn't process request");
                         break;
@@ -228,7 +260,9 @@ chat_server.on('connection', function(connection) {
             var userConnection = users[user].userconnection;
             if (connection === userConnection) {
                 console.log("[user deleted] ", users[user].id); 
-                delete users[user];
+                user_timeouts[users[user].userName] = setTimeout(function() {
+                    delete users[user];
+                }, 10000);
             } else {
                 console.log("[no user deleted]");
             }
