@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+<script type="text/javascript" src="C:\Users\Ricardo\Documents\GitHub\EmergencyAssistantAppWebpage\WebPage\JavaScript Stuff\json2.js"></script>
+<script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+<script>
+
+$.fn.serializeObject = function()
+{
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
+
+$(function() {
+    $('#prueba').submit(function() {
+        <!--$('#result').text(JSON.stringify($('#prueba').serializeObject()));
+		var key = $('#clientP').val();
+		var JSONobject = JSON.stringify($('#prueba').serializeObject());
+		
+		localStorage.setItem( key , JSONobject);
+		
+		<!--('#result').text("The key is " + key + " and the value is " + localStorage.getItem(key));
+		
+        return false;
+    });
+});
+
+$(function(){
+	$('#getData').click(function(){
+		var dataKey = $('#keyFetcher').val();
+		var actualStorageSize = JSON.stringify(localStorage).length;
+		var cosa = JSON.parse(localStorage.getItem(dataKey));
+		$('#result').text("KEY = "+ dataKey + " DATA = " + localStorage.getItem(dataKey) + " SIZE = " + actualStorageSize + " Bytes");
+		alert(localStorage.length);
+		return false;
+    })
+})
+
+
+function counterReset()
+{
+localStorage.clear();
+}
+
+<!-----------------MAPA---------------------->
+
+
+
+
+function getLocation()
+  {
+  if (navigator.geolocation)
+    {
+    navigator.geolocation.getCurrentPosition(showPosition,showError);
+    }
+  else{x.innerHTML="Geolocation is not supported by this browser.";}
+  }
+
+function showPosition(position)
+  {
+  lat=position.coords.latitude;
+  lon=position.coords.longitude;
+  latlon=new google.maps.LatLng(lat, lon)
+  mapholder=document.getElementById('mapholder')
+  mapholder.style.height='250px';
+  mapholder.style.width='500px';
+
+  var myOptions={
+  center:latlon,zoom:14,
+  mapTypeId:google.maps.MapTypeId.ROADMAP,
+  mapTypeControl:false,
+  navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
+  };
+  var map=new google.maps.Map(document.getElementById("mapholder"),myOptions);
+  var marker=new google.maps.Marker({position:latlon,map:map,title:"You are here!"});
+  }
+
+function showError(error)
+  {
+  switch(error.code) 
+    {
+    case error.PERMISSION_DENIED:
+      x.innerHTML="User denied the request for Geolocation."
+      break;
+    case error.POSITION_UNAVAILABLE:
+      x.innerHTML="Location information is unavailable."
+      break;
+    case error.TIMEOUT:
+      x.innerHTML="The request to get user location timed out."
+      break;
+    case error.UNKNOWN_ERROR:
+      x.innerHTML="An unknown error occurred."
+      break;
+    }
+  }
+
+</script>
+
+
+</head>
+<body>
+
+<button onclick="counterReset()" type="button">Reset local storage</button>
+
+<!------------------------------------------------------------------------------------------------------------------------>
+<!------------------------------------------------------------------------------------------------------------------------>
+<!------------------------------------------------------------------------------------------------------------------------>
+<!------------------------------------------------------------------------------------------------------------------------>
+<!------------------------------------------------------------------------------------------------------------------------>
+
+<h2>Form</h2>
+
+<form id="prueba" action="" method="post">
+First Name:<input type="text" name="Fname" maxlength="12" size="12"/> <br/>
+Last Name:<input type="text" name="Lname" maxlength="36" size="12"/> <br/>
+Gender:<br/>
+Male:<input type="radio" name="gender" value="Male"/><br/>
+Female:<input type="radio" name="gender" value="Female"/><br/>
+Favorite Food:<br/>
+Steak:<input type="checkbox" name="food[]" value="Steak"/><br/>
+Pizza:<input type="checkbox" name="food[]" value="Pizza"/><br/>
+Chicken:<input type="checkbox" name="food[]" value="Chicken"/><br/>
+<textarea wrap="physical" cols="20" name="quote" rows="5" placeholder="Enter your favorite quote!">Enter quote:</textarea><br/>
+
+Select a Level of Education:<br/>
+<select name="education">
+<option value="Jr.High">Jr.High</option>
+<option value="HighSchool">HighSchool</option>
+<option value="College">College</option></select><br/>
+
+
+Select your favorite time of day:<br/>
+<select size="3" name="TofD">
+<option value="Morning">Morning</option>
+<option value="Day">Day</option>
+<option value="Night">Night</option></select><br>
+
+
+Telefono <input id="clientP"type="text" name="clientPhoneNumber" maxlength="12" size="12"/>
+<p><button type="submit">Try It</button></p>
+</form>
+
+
+<!--<form id="formData">-->
+Write key to see data<input type="text" id="keyFetcher"/>
+<br><p><button id="getData">Get Data</button></p><br>
+<!--</form>-->
+<h2>JSON</h2>
+<pre id="result">
+</pre>
+
+<div id="mapholder"></div>
+
+</body>
+</html>

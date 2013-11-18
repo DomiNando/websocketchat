@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<title>Emergency Center</title>
+
+
+<head>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://www.json.org/json2.js"></script>
+
+<script>
+
+<!--Transforms a String Object to a JSON Object-->
+$.fn.serializeObject = function()
+{
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+        if (o[this.name] !== undefined) {
+            if (!o[this.name].push) {
+                o[this.name] = [o[this.name]];
+            }
+            o[this.name].push(this.value || '');
+        } else {
+            o[this.name] = this.value || '';
+        }
+    });
+    return o;
+};
+
+
+<!--Adds a Client with an Emergency to Local Storage-->
+$(function() {
+    $('#addClient').submit(function() {
+        
+		var key = $('#clientPhoneNumber').val();
+		var timestamp = new Date();
+		$('#timeStamp').val(timestamp);
+		localStorage.setItem( key , JSON.stringify($('#addClient').serializeObject()));
+		<!--('#result').text("The key is " + key + " and the value is " + localStorage.getItem(key));
+		
+        return false;
+    });
+});
+
+<!--Edits information of an Emergency-->
+function editInfo()
+{
+
+}
+
+<!--Displays the information of the emergency on screen along with the clients location(map)-->
+function showInfo()
+{
+
+}
+
+<!--Shares the clients information with another agency-->
+function relayInfo()
+{
+
+}
+
+<!--Prueba------------------------------------------------------------------------------------------------------------------------------->
+$(function(){
+	$('#formData').submit(function(){
+		
+		var dataKey = $('#keyFetcher').val();
+		var size = localStorage.length;
+		var actualStorageSize = JSON.stringify(localStorage).length;
+		$('#result').text("KEY = "+ dataKey + " DATA = " + localStorage.getItem(dataKey) + " SIZE = " + actualStorageSize + " Bytes");
+		alert(actualStorageSize);
+		return false;
+    })
+})
+
+function counterReset()
+{
+localStorage.clear();
+}
+
+</script>
+
+<style>
+.container { border:2px solid #ccc; width:500px; height: 100px; overflow-y: scroll; }
+
+
+
+</style>
+</head>
+
+<body>
+
+
+<form action="" id="main">
+
+
+<h1>Active Resolved Emergencies</h1>
+
+<h2>Relayed Emergencies</h2>
+
+<div class="container">
+<input type="radio" name="relayEmergencyList" />  <br />
+
+</div>
+
+<h2>Active Emergencies</h2>
+
+<div class="container">
+<input type="radio" name="activeEmergencyList" />  <br />
+
+</div>
+<!--Este trabaja con el servidor-->
+<button type="button" onclick="saveRequest()" form="main">Mark as Resolved</button>
+
+<!--Los otros 3 son client side-->
+<button type="button" onclick="showInfo()" form="Emergencies">Show Information</button><br>
+
+<button type="button" onclick="addClientInformation()" form="Emergencies">Add Client Information</button>
+
+<button type="button" onclick="editInfo()" form="Emergencies">Edit Emergency</button>
+</form>
+
+<form id="relay">
+<h2>Relay Emergency</h2>
+
+Destination Phone Number: <input type="text" name="fname" ><br><br>
+
+Reason for Relay:<br> <textarea rows="4" cols="60" name="emergency description" maxlegth="500" placeholder="Short description for the relay" required>
+</textarea><br><br>
+
+<button type="button" onclick="relayInfo()" form="relay">Relay</button>
+
+</form>
+
+<div id="showInfo">
+<h2>Client Information</h2>
+<form id="addClient">
+
+<strong>
+
+Clients Phone Number: <input id="clientPhoneNumber"type="text" name="clientPhoneNumber" maxlength="10" size="10" required/><br><br>
+
+Name:<input type="text" name="clientName" maxlength="40" size="30"required><br><br>
+
+Address:<input type="text" name="clientAddress" maxlength="100" size="70" required><br><br>
+
+Type of Emergency:<select name="typeOfEmergency" size="1" placeholder="Select Type" required>
+					
+					<option value="Type1">Type 1</option>
+					<option value="Type2">Type 2</option>
+					<option value="Type3">Type 3</option>
+</select><br><br>
+
+Emergency at Home?:<input type="radio" name="outsideHome" value="Yes" >Yes</input><input type="radio" name="outsideHome" value="No" >No</input><br>
+
+Assigned Agent: <input type="text" name="attendedBy" maxlength="40" ><br>
+
+Emergency Description:<br><textarea rows="4" cols="100" name="emergencyDetails" maxlegth="500" placeholder="Short description of the emergency" required>
+</textarea><br><br>
+
+Relay Description(If any):<br><textarea rows="4" cols="100" name="reason" maxlegth="500" placeholder="Short description for the Relay" required>
+</textarea><br><br>
+
+Client Location:<input type=hidden name="latitude" ><input type=hidden name="longitude" ><br><br>
+
+<input type=hidden name="timestamp" id="timeStamp">
+<p><input type="submit"  /></p>
+</strong>
+
+</form>
+</div>
+
+<form id="formData">
+Write key to see data<input type="text" id="keyFetcher"/>
+<br><p><input type="submit" id="getData"/></p><br>
+</form>
+<h2>JSON</h2>
+<pre id="result">
+</pre>
+<button onclick="counterReset()" type="button">Reset local storage</button>
+
+</body>
+</html>

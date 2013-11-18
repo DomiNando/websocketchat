@@ -1,0 +1,302 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Name       : Breakeven 
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20130509
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta name="keywords" content="" />
+  <meta name="description" content="" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>History</title>
+  <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css" />
+  <link href='http://fonts.googleapis.com/css?family=Abel|Satisfy' rel='stylesheet' type='text/css'>
+  <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
+
+  <script>
+  <!-----------TRANSFORMS a String Object to a JSON Object--------->
+  $.fn.serializeObject = function()
+  {
+    var o = {};
+    var a = this.serializeArray();
+    $.each(a, function() {
+      if (o[this.name] !== undefined) {
+        if (!o[this.name].push) {
+          o[this.name] = [o[this.name]];
+        }
+        o[this.name].push(this.value || '');
+      } else {
+        o[this.name] = this.value || '';
+      }
+    });
+    return o;
+  };
+
+  <!--------------------Sets the maximum value of Date input to todays date--------------->
+  $(window).load(function () {
+   
+   var date = new Date();
+   var month = date.getMonth()+1;
+   var day = date.getDate();
+
+   var dateFormat = date.getFullYear() + '-' +
+   ((''+month).length<2 ? '0' : '') + month + '-' +
+   ((''+day).length<2 ? '0' : '') + day;
+   
+   $("#date").attr("max", dateFormat);
+ });
+  
+
+  <!-----------------Searches for history information--------------------------------------->
+  $(function () {
+    $("#go").click(function(){
+     $("#history").empty();
+     var date = new Date();
+     var month = date.getMonth()+1;
+     var day = date.getDate();
+
+     var dateFormat = date.getFullYear() + '-' +
+     ((''+month).length<2 ? '0' : '') + month + '-' +
+     ((''+day).length<2 ? '0' : '') + day;
+     
+     var JSONHDate = JSON.stringify($("#historyform").serializeObject());
+     if (JSON.parse(JSONHDate).date == ""){
+      alert("Please select a date");
+      $("#historyform").trigger("reset");
+    }
+    else{
+     var storageElements = localStorage.length;
+
+     if (storageElements == 0){
+      alert("There are no records in the DB");
+      return false;
+      
+    }else{
+     var i,key,JSONObject;
+     var localStorageKeys = Object.keys(localStorage);
+     for ( i = 0; i < storageElements; i++){
+       key =  localStorageKeys[i];
+       
+       JSONObject = localStorage.getItem(key);
+       
+       var timeStamp = JSON.parse(JSONObject).timeStamp;
+       
+       var JSONDate = timeStamp.split(" ");
+       
+       
+       if( JSONDate[0] == JSON.parse(JSONHDate).date ){
+         
+         
+         var texto = JSON.parse(JSONObject).clientName + ", " +JSON.parse(JSONObject).clientPhoneNumber + ", " +JSON.parse(JSONObject).attendedBy;
+         
+         
+         
+         var radioBtn = $('<input id="'+ key +'" type="radio" name="active" value=' + '"'+ key + '"' +'>'+texto+'</input><br>');
+         $('#history').append(radioBtn);
+         
+         
+       }
+       
+       
+       
+     }
+   }
+   
+ }
+ 
+ return false;
+});
+});
+
+<!------------------------------------------Shows Emergency Details----------------------------------------->
+$(function() {
+  $("#details").click(function() {
+   
+   var JSONkey, JSONObject, key, position;
+   JSONkey = JSON.stringify($('#main').serializeObject());
+   key = JSON.parse(JSONkey).active;
+   
+   if ( typeof key != "undefined"){
+     
+     $("#sidebar1").css("display","none");
+     $("#sidebar2").css("display","inline");
+     $("#go").attr("disabled", true);
+     $("#goback").attr("disabled", false);  
+     
+     JSONObject = localStorage.getItem(key);
+     $("#cpn").html(JSON.parse(JSONObject).clientPhoneNumber);
+     $("#n").html(JSON.parse(JSONObject).clientName);
+     $("#a").html(JSON.parse(JSONObject).clientAddress);
+     $("#toe").html(JSON.parse(JSONObject).typeOfEmergency);
+     $("#eah").html(JSON.parse(JSONObject).outsideHome);
+     $("#aa").html(JSON.parse(JSONObject).attendedBy);
+     $("#ed").html(JSON.parse(JSONObject).emergencyDetails);
+     $("#rd").html(JSON.parse(JSONObject).reason);
+     $("#ts").html(JSON.parse(JSONObject).timeStamp);
+     position = JSON.parse(JSONObject).latitude + ', ' + JSON.parse(JSONObject).longitude; 
+     
+     
+     if (navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(showPosition,showError);
+    }
+    else{
+     alert("Geolocation is not supported by this browser.");
+   }
+
+   function showPosition()
+   {
+     lat=JSON.parse(JSONObject).latitude;
+     lon=JSON.parse(JSONObject).longitude;
+     latlon=new google.maps.LatLng(lat, lon)
+     
+
+     var myOptions={
+       center:latlon,zoom:14,
+       mapTypeId:google.maps.MapTypeId.ROADMAP,
+       mapTypeControl:false,
+       navigationControlOptions:{style:google.maps.NavigationControlStyle.SMALL}
+     };
+     var map=new google.maps.Map(document.getElementById("cl"),myOptions);
+     var marker=new google.maps.Marker({position:latlon,map:map,title:"Client is here"});
+   }
+
+   function showError(error)
+   {
+     switch(error.code) 
+     {
+      case error.PERMISSION_DENIED:
+      alert("User denied the request for Geolocation.");
+      break;
+      case error.POSITION_UNAVAILABLE:
+      alert("Location information is unavailable.");
+      break;
+      case error.TIMEOUT:
+      alert("The request to get user location timed out.");
+      break;
+      case error.UNKNOWN_ERROR:
+      alert("An unknown error occurred.");
+      break;
+    }
+  }
+  
+  
+  
+  
+}else{
+  alert("Choose an Emergency to show Details");
+}
+return false;
+});
+});
+
+$(function() {
+  $("#goback").click(function() {
+    $("#sidebar1").css("display","inline");
+    $("#sidebar2").css("display","none");
+    $("#go").attr("disabled", false);
+    $("#goback").attr("disabled", true);
+    $("#history").empty();
+    $("#historyform").trigger("reset");
+  });
+});
+</script>
+
+
+</head>
+<body>
+  <div id="wrapper">
+   <div id="header-wrapper">
+    <div id="header" class="container">
+     <div id="logo">
+      <h1><a>Emergency Center</a></h1>
+    </div>
+    <div id="menu">
+      <ul>
+       <li><a href="Active Emergencies Prototype.html">Homepage</a></li>
+       <li class="current_page_item"><a href="#">History</a></li>
+       <li><a href="Login Prototype.html">Log out</a></li>
+       
+     </ul>
+   </div>
+ </div>
+</div>
+<!-- end #header -->
+<div id="page">
+  <div id="content">
+   <div class="post">
+    
+    <div class="entry">
+      
+     <h2>History</h2>
+     <form id="main">
+       <div id="history" class="containerHistory">
+
+        
+       </div>
+     </form>
+     <br><button id="details" type="submit" class="more" form="main">View Details</button>
+     
+     
+     
+     
+   </div>
+ </div>
+</div>
+<!-- end #content -->
+<div id="sidebar1">
+ <ul>
+  <li>
+   <h2>Filters</h2>
+   <ul>
+    <form id="historyform" action="" method="post">
+      <li> Select a day to view past emergency reports: <input type="date" id="date" name="date" /> </li>
+      <button id="go" type="submit" class="more" max="">Submit</button>
+    </form>
+  </ul>
+</li>
+</ul>
+</div>
+
+<div id="sidebar2">
+ <ul>
+  <li>
+   <h2>Emergency Information</h2>
+   <ul>
+    <li>Client Phone Number:<h3 id="cpn"></h3> </li>
+    <li>Name:<h3 id="n"></h3></li>
+    <li>Address:<h3 id="a"></h3></li>
+    <li>Type of Emergency:<h3 id="toe"></h3></li>
+    <li>Emergency at Home?:<h3 id="eah"></h3></li>
+    <li>Assigned Agent: <h3 id="aa"></h3></li>
+    <li>Emergency Description:<br><div class="container3"><p id="ed"></p></div></li>
+    <li>Relay Description(If any):<br><div class="container3"><p id="rd"></p></div></li>
+    <li>Date and Time Received(YYYY/MM/DD):<h3 id="ts"></h3>
+      <li>Client Location:<div id="cl" style="height:300px; width:350px;"></div></li><br>
+      <button id="goback" type="button" class="more">Search Again</button>
+      
+    </ul>
+  </li>
+</ul>
+</div>
+<!-- end #sidebar -->
+<div style="clear: both;">&nbsp;</div>
+</div>
+<!-- end #page --> 
+
+</div>
+<div id="footer">
+  <p>Copyright (c) 2013 Sitename.com. All rights reserved. Images by <a href="http://fotogrph.com/">Fotogrph</a>. Design by <a href="http://www.freecsstemplates.org/" rel="nofollow">FreeCSSTemplates.org</a>.</p>
+</div>
+<!-- end #footer -->
+</body>
+</html>

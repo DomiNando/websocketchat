@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<title>Client Information</title>
+<head>
+<script>
+<!--Verifies that the user is in the App Database-->
+<!--Returns: Confirmation message-->
+function verifyUser(str)
+{
+var xmlhttp;
+if (str.length<10)
+  { 
+  document.getElementById("confirmation").innerHTML="Type the 10 didgit telephone number";
+  return;
+  }
+if (window.XMLHttpRequest)
+  {// code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp=new XMLHttpRequest();
+  }
+else
+  {// code for IE6, IE5
+  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xmlhttp.onreadystatechange=function()
+  {
+  if (xmlhttp.readyState==4 && xmlhttp.status==200)
+    {
+    document.getElementById("confirmation").innerHTML=xmlhttp.responseText;
+    }
+  }
+xmlhttp.open("GET","gethint.asp?q="+str,true);
+xmlhttp.send();
+}
+
+<!--Saves the clients request in the databse-->
+function saveRequest()
+{
+
+}
+
+function timeStamp()
+{
+var timeStamp = new Date();
+document.getElementById("timeStamp").value = timeStamp;
+}
+</script>
+</head>
+
+<body>
+
+<h1>Client Information</h1>
+
+
+
+Confirm App User: <input type="text" onkeyup="verifyuser(this.value)" placeholder="Client telephone number">
+
+<p><span id="confirmation"></span></p>
+
+
+
+
+<br><br>
+
+<form  id="main">
+Name: <input type="text" name="clientName"  required><br>
+
+Address: <input type="text" name="clientAddress" size="40" required><br>
+
+Emergency at Home?: <input type="checkbox" name="outsideHome"><br>
+
+Type of Emergency: <select name="typeOfEmergency" form="main" size="1" placeholder="Select Type" required>
+					<option value="volvo">Select a Type</option>
+					<option value="volvo">Type 1</option>
+					<option value="volvo">Type 2</option>
+					<option value="volvo">Type 3</option>
+</select><br>
+
+Assign Agent: <input type="text" name="attendedBy" ><br>
+
+Emergency Description:<br> <textarea rows="4" cols="100" name="emergencyDetails" maxlegth="500" placeholder="Short description of the emergency" required>
+</textarea><br><br>
+
+<input type=hidden name="timestamp" id="timeStamp">
+<button type="button" onclick="saveRequest()" form="main">Submit</button>
+</form>
+
+
+
+</body>
+</html>
