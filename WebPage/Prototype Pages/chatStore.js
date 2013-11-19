@@ -16,6 +16,10 @@ var ChatStore = Stapes.subclass({
     },
 
     save: function(data) {
-        window.localStorage['emergency-chat'] = JSON.stringify(data);
+         while (data.length > 10) {
+            data.splice(0,1);
+        }
+
+         window.localStorage['emergency-chat'] = JSON.stringify(data);
     }
 });

@@ -60,7 +60,6 @@ var ChatController  = Stapes.subclass({
 
             'new message': function() {
                 this.renderAll();
-                this.view.flash();
                 console.log('new!');
             }
         }, this);
