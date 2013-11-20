@@ -1,78 +1,82 @@
-function ChatServer() {
+/*global require */
+
+function ChatServer(chat_port, chat_prefix) {
+    'use strict';
     /**
     * Chat Server Begins here.
     */
 
-    // creamos un servidor nuevo para el chat
+    // include required libraries
     var express = require('express');
     var chat_http = require('http');
     var main_server = express();
-    var http_server = chat_http.createServer(express);
-    var sockjs_opts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js"};
-    var oneDay = 86400000;
-    http_server.listen(3500, function() {
-        console.log('chat is listening on port 3500');
-    });
-
-    // include required libraries
     var sockjs = require("sockjs");
+    var http_server = chat_http.createServer(main_server);
+
+    var sockjs_opts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js"};
+
+    var port_number = chat_port || 3500;
+    var prefix = chat_prefix || '/chat';
+    http_server.listen(port_number, function() {
+        console.log('chat is listening on port', port_number);
+    });
 
     // configuration an utility variables
     //var util = require('./routes/util');
     var util = {
-    test: function(text) {
-        if (/^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-            //the json is ok
-            return true;
-        }
+        test: function(text) {
+            if (/^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+                //the json is ok
+                return true;
+            }
+            
+            return false;
+        },
         
-        return false;
-    },
-    
-    sendError: function(connection, code, message) {
-        var mes = {
-            "event": "error",
-            "data": {
-                "errorCode": code,
-                "errMessage": message
-            }
-        };
-    
-        connection.write(JSON.stringify(mes));
-    },
-    
-    getConnection: function(destination) {
-        for (var user in users) {
-            if (users[user].id === destination) {
-                return users[user].userconnection;
-            }
-        }
-    },
-    
-    sendMessage: function(connection, message) {
-        connection.write(JSON.stringify(message));
-    },
-    
-    getUser: function(connection) {
-        for (var user in users) {
-            if (users[user].userconnection == connection) {
-                console.log("[returning user] ", users[user].userName);
-                return users[user].userName;
-            }
-        }
+        sendError: function(connection, code, message) {
+            var mes = {
+                "event": "error",
+                "data": {
+                    "errorCode": code,
+                    "errMessage": message
+                }
+            };
         
-        return false;
-    }
-};
+            connection.write(JSON.stringify(mes));
+        },
+        
+        getConnection: function(destination) {
+            for (var user in users) {
+                if (users[user].id === destination) {
+                    return users[user].userconnection;
+                }
+            }
+        },
+        
+        sendMessage: function(connection, message) {
+            connection.write(JSON.stringify(message));
+        },
+        
+        getUser: function(connection) {
+            for (var user in users) {
+                if (users[user].userconnection == connection) {
+                    console.log("[returning user] ", users[user].userName);
+                    return users[user].userName;
+                }
+            }
+            
+            return false;
+        }
+    };
 
     // initial setup
-    var chat_server = sockjs.createServer(sockjs_opts),
+    var chat_server = sockjs.createServer(sockjs_opts);
 
-    chat_server.installHandlers(http_server, { prefix: '/chat' }),
+    chat_server.installHandlers(http_server, { prefix: prefix });
 
     // main chat code is here
-    var users = {},
-    var user_timeouts = [],
+    var users = {};
+    var user_timeouts = [];
     this.start = function() {
         chat_server.on('connection', function(connection) {
                 console.log("[new connection]", connection.remoteAddress);
@@ -83,7 +87,7 @@ function ChatServer() {
                     // let's make sure the request is not empty or not valid json
                     if (request === null || !util.test(request)) {
                         console.log(request + " from " + connection.remoteAddress + ":" + connection.remotePort);
-                        this.util.sendError(connection, 400, "Server couldn't process request");
+                        ChatServer.util.sendError(connection, 400, "Server couldn't process request");
                     } else {
                         // now that we know the request is valid json, let's parse it
                         // and react to the events
@@ -125,14 +129,14 @@ function ChatServer() {
                                     };
                                     
                                     console.log(users[userName].userconnection);
-                                    var response = {
+                                    var res = {
                                         "event" : "user ok",
                                         "data" : {
                                             "userId" : userId
                                         }
                                     };
                                     
-                                    util.sendMessage(connection, response);
+                                    util.sendMessage(connection, res);
                                     
                                     // un-comment the following for debuging purposes
                                     // console.log("Users in object till now");
@@ -154,7 +158,7 @@ function ChatServer() {
                                     var hr = today.getHours();
                                     var mins = today.getMinutes();
                                     var secs = today.getSeconds();
-                                    if(dd<10){dd='0'+dd} if(mm<10){mm='0'+mm} today = mm+'/'+dd+'/'+yyyy;
+                                    if (dd<10) {dd='0'+dd; } if(mm<10) { mm='0'+mm; } today = mm+'/'+dd+'/'+yyyy;
                                     var fullDate ="at "+dd+"/"+mm+"/"+yyyy+" "+hr+":"+mins+":"+secs;
                                     
                                     var responseMessage = data.message;
@@ -165,7 +169,7 @@ function ChatServer() {
                                     
                                     var conn = util.getConnection(destination);
                                     
-                                    var response = {
+                                    var rs = {
                                         "event": "message",
                                         "data": {
                                             "message" : responseMessage,
@@ -173,7 +177,7 @@ function ChatServer() {
                                         }
                                     };
                                     if (conn) {
-                                        conn.write(JSON.stringify(response));
+                                        conn.write(JSON.stringify(rs));
                                     } else {
                                         util.sendError(connection, 406, "Found no destination to send");
                                     }
@@ -189,18 +193,18 @@ function ChatServer() {
                                      console.log("[self chat attempt]");
                                  } else if (users[dest]) {
                                     
-                                    var destination = users[dest];
-                                    console.log("[destination] ", destination);
+                                    var destino = users[dest];
+                                    console.log("[destination] ", destino);
                                     
-                                    console.log("[connecting to] ", destination);
-                                    var response = {
+                                    console.log("[connecting to] ", destino);
+                                    var rspv = {
                                         "event" : "request ok",
                                         "data" : {
-                                            "userId": destination.id
+                                            "userId": destino.id
                                         }
                                     };
                                     
-                                    util.sendMessage(connection, response);
+                                    util.sendMessage(connection, rspv);
                                     
                                     if (data.newChat) {
                                         var name = util.getUser(connection);
@@ -213,8 +217,8 @@ function ChatServer() {
                                             }
                                         };
                                         
-                                        var conn = users[dest].userconnection;
-                                        util.sendMessage(conn, message);
+                                        var conexion = users[dest].userconnection;
+                                        util.sendMessage(conexion, message);
                                     }
                                 } else {
                                     util.sendError(connection, 400, "Server couldn't process request");
@@ -263,10 +267,9 @@ function ChatServer() {
                     }
                 }
             });
-        })
-    }
+        });
+    };
 }
-
-var exports = new ChatServer();
-var chat_server = require('./routes/chat_server');
+var prefix = null, port_number = null;
+var chat_server = new ChatServer(port_number, prefix);
 chat_server.start();
