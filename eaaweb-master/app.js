@@ -106,8 +106,7 @@ app.get('/mobileEmergency', function(req, res){
 //app.get('/hospitalPhoneNumber', mobile.hospitalPhoneNumber);
 app.get('/registerDevice', mobile.registerDevice);
 
-// Added http_server variable for chat functinality
-var http_server = http.createServer(app).listen(app.get('port'), function(){
+http.createServer(app).listen(app.get('port'), function(){
     console.log('Express server listening on port ' + app.get('port'));
 });
 
@@ -115,6 +114,14 @@ var http_server = http.createServer(app).listen(app.get('port'), function(){
 /**
 * Chat Server Begins here.
 */
+
+// creamos un servidor nuevo para el chat
+var chat_http = require('http');
+var main_server = express();
+var http_server = chat_http.createServer(express)
+http_server.listen(4000, function() {
+    console.log('chat is listening on port 4000');
+});
 
 // include required libraries
 var sockjs = require("sockjs");
@@ -281,16 +288,6 @@ chat_server.on('connection', function(connection) {
                     case "login":
                         // check if this user was loged in before
                         if (data.phonenumber) {
-                            // if (data.username && users[data.username]) {
-                            //     users[data.username].userconnection = connection;
-                            // } else {
-                            //     var userId = data.username + "" + connection.remotePort;
-                            //     users[data.username] = {
-                            //         userconnection: connection,
-                            //         id: userId,
-                            //         userName: data.username
-                            //     };
-                            // }
                             if (users[data.phonenumber]) {
                                 clearTimeout(user_timeouts[data.phonenumber]);
                                 users[data.phonenumber].userconnection = connection;
