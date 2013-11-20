@@ -7,9 +7,7 @@ var express = require('express');
 var chat_http = require('http');
 var main_server = express();
 var http_server = chat_http.createServer(express)
-http_server.listen(3500, function() {
-    console.log('chat is listening on port 3500');
-});
+
 
 // include required libraries
 var sockjs = require("sockjs");
@@ -69,6 +67,9 @@ var oneDay = 86400000;
 var chat_server = sockjs.createServer(sockjs_opts);
 
 chat_server.installHandlers(http_server, { prefix: '/chat' });
+http_server.listen(3500, function() {
+    console.log('chat is listening on port 3500');
+});
 
 // main chat code is here
 var users = {};
