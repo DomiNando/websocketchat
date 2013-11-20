@@ -16,7 +16,52 @@ var sockjs = require("sockjs");
 
 // configuration an utility variables
 //var util = require('./routes/util');
-var util = require('./util');
+var util = {
+    test: function(text) {
+        if (/^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
+            //the json is ok
+            return true;
+        }
+        
+        return false;
+    },
+    
+    sendError: function(connection, code, message) {
+        var mes = {
+            "event": "error",
+            "data": {
+                "errorCode": code,
+                "errMessage": message
+            }
+        };
+    
+        connection.write(JSON.stringify(mes));
+    },
+    
+    getConnection: function(destination) {
+        for (var user in users) {
+            if (users[user].id === destination) {
+                return users[user].userconnection;
+            }
+        }
+    },
+    
+    sendMessage: function(connection, message) {
+        connection.write(JSON.stringify(message));
+    },
+    
+    getUser: function(connection) {
+        for (var user in users) {
+            if (users[user].userconnection == connection) {
+                console.log("[returning user] ", users[user].userName);
+                return users[user].userName;
+            }
+        }
+        
+        return false;
+    }
+};
+
 var sockjs_opts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js"};
 var oneDay = 86400000;
 
