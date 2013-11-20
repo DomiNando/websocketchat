@@ -12,7 +12,7 @@ function ChatServer() {
     var oneDay = 86400000;
     http_server.listen(3500, function() {
         console.log('chat is listening on port 3500');
-    }),
+    });
 
     // include required libraries
     var sockjs = require("sockjs");
@@ -73,7 +73,7 @@ function ChatServer() {
     // main chat code is here
     var users = {},
     var user_timeouts = [],
-    this.start = funtion() {
+    this.start = function() {
         chat_server.on('connection', function(connection) {
                 console.log("[new connection]", connection.remoteAddress);
                 console.log("[port] ", connection.remotePort);
