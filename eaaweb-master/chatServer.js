@@ -15,7 +15,7 @@ function ChatServer() {
     }),
 
     // include required libraries
-    var sockjs = require("sockjs"),
+    var sockjs = require("sockjs");
 
     // configuration an utility variables
     //var util = require('./routes/util');
