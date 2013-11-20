@@ -4,12 +4,12 @@ function ChatServer() {
     */
 
     // creamos un servidor nuevo para el chat
-    var express = require('express'),
-    var chat_http = require('http'),
-    var main_server = express(),
-    var http_server = chat_http.createServer(express),
-    var sockjs_opts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js"},
-    var oneDay = 86400000,
+    var express = require('express');
+    var chat_http = require('http');
+    var main_server = express();
+    var http_server = chat_http.createServer(express);
+    var sockjs_opts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js"};
+    var oneDay = 86400000;
     http_server.listen(3500, function() {
         console.log('chat is listening on port 3500');
     }),
