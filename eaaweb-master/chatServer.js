@@ -16,7 +16,7 @@ var sockjs = require("sockjs");
 
 // configuration an utility variables
 //var util = require('./routes/util');
-var util = require(util);
+var util = require('./util');
 var sockjs_opts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js"};
 var oneDay = 86400000;
 
