@@ -1,4 +1,4 @@
-/*global require */
+/*global require, console */
 
 function ChatServer(chat_port, chat_prefix) {
     'use strict';
@@ -24,13 +24,15 @@ function ChatServer(chat_port, chat_prefix) {
     // configuration an utility variables
     //var util = require('./routes/util');
     var util = {
-        test: function(text) {
-            if (/^[\],:{}\s]*$/.test(text.replace(/\\["\\\/bfnrtu]/g, '@').replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {
-                //the json is ok
-                return true;
+        test: function(text) {  // function to test if a string converts to valid JSON.
+
+            try {
+                JSON.parse(text);
+            } catch (error) {
+                return false;
             }
-            
-            return false;
+
+            return true;
         },
         
         sendError: function(connection, code, message) {
@@ -66,6 +68,20 @@ function ChatServer(chat_port, chat_prefix) {
             }
             
             return false;
+        },
+
+        fullDate: function() {
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth()+1;
+            var yyyy = today.getFullYear();
+            var hr = today.getHours();
+            var mins = today.getMinutes();
+            var secs = today.getSeconds();
+            if (dd<10) { dd='0'+dd; }
+            if (mm<10) { mm='0'+mm; } 
+            today = mm+'/'+dd+'/'+yyyy;
+            return "at "+dd+"/"+mm+"/"+yyyy+" "+hr+":"+mins+":"+secs;
         }
     };
 
@@ -97,7 +113,8 @@ function ChatServer(chat_port, chat_prefix) {
                         console.log("[event]", eventType);
                         
                         switch (eventType) {
-                            case "new user":
+        
+                            case "new user": // new user is depreceated, don't use.
                                 if (data.phoneNumber) {
                                     data.userName = data.phoneNumber;
                                 } else if (data.userName) {
@@ -149,17 +166,10 @@ function ChatServer(chat_port, chat_prefix) {
                                 }
                                 
                                 break;
+                            
                             case "message":
                                 if (data) {
-                                    var today = new Date();
-                                    var dd = today.getDate();
-                                    var mm = today.getMonth()+1;
-                                    var yyyy = today.getFullYear();
-                                    var hr = today.getHours();
-                                    var mins = today.getMinutes();
-                                    var secs = today.getSeconds();
-                                    if (dd<10) {dd='0'+dd; } if(mm<10) { mm='0'+mm; } today = mm+'/'+dd+'/'+yyyy;
-                                    var fullDate ="at "+dd+"/"+mm+"/"+yyyy+" "+hr+":"+mins+":"+secs;
+                                    var fullDate = util.fullDate();
                                     
                                     var responseMessage = data.message;
                                     responseMessage += " " + fullDate;
@@ -176,15 +186,18 @@ function ChatServer(chat_port, chat_prefix) {
                                             "userName": connection.userName
                                         }
                                     };
-                                    if (conn) {
+
+                                    if (conn) { // if there is a connection, send the response.
                                         conn.write(JSON.stringify(rs));
                                     } else {
                                         util.sendError(connection, 406, "Found no destination to send");
                                     }
+
                                 } else {
                                     util.sendError(connection, 406, "Found no message to send");
                                 }
                                 break;
+
                             case "requestChat":
                                 var dest = data.destination;
                                 console.log("[to] ", dest);
@@ -206,7 +219,7 @@ function ChatServer(chat_port, chat_prefix) {
                                     
                                     util.sendMessage(connection, rspv);
                                     
-                                    if (data.newChat) {
+                                    if (data.newChat) {     // this is a special condition sent by a mobile
                                         var name = util.getUser(connection);
                                         
                                         console.log("[user connection] ", name);
