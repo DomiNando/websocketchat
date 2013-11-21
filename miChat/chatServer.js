@@ -183,7 +183,7 @@ function ChatServer(chat_port, chat_prefix) {
                                         "event": "message",
                                         "data": {
                                             "message" : responseMessage,
-                                            "userName": connection.userName
+                                            "userName": ChatServer.util.getUser(connection)
                                         }
                                     };
 
