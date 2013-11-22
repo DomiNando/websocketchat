@@ -271,6 +271,12 @@ $(function(){
                 success : function(data) {
                     alert("User successfully deleted");
 
+
+                    $("#sidebar1").css("display","inline");
+                    $("#sidebar2").css("display","none");
+                    $(".entry").css("display", "inline");
+                    $(".entry1").css("display", "none");
+                    $("#go").attr("disabled", false);
                 },
                 error: function(data){
                     alert("error user delete");
@@ -301,8 +307,14 @@ $(function(){
                 contentType: "application/json",
                 data: sendData,
                 success : function(data) {
+
                     alert("Service successfully deleted");
 
+                    $("#sidebar1").css("display","inline");
+                    $("#sidebar3").css("display","none");
+                    $(".entry").css("display", "inline");
+                    $(".entry1").css("display", "none");
+                    $("#go").attr("disabled", false);
                 },
                 error: function(data){
                     alert("error service delete");
@@ -338,6 +350,11 @@ $(function(){
     });
 });
 
+//<!----------------------------------------------------Log out-------------------------------------------------------->
+function logOut(){
+    sessionStorage.clear();
+    window.location.replace("/");
+};
 
 </script>
 
@@ -354,7 +371,7 @@ $(function(){
                     <li class="current_page_item"><a>Home</a></li>
                     <li><a href="/newUser">Add User</a></li>
                     <li><a href="/newService">Add Service</a></li>
-                    <li><a href="http://localhost:63342/Pages/Login Prototype.html">Log out</a></li>
+                    <li><a href="javascript:void(0)" onclick="logOut()">Log out</a></li>
 
                 </ul>
             </div>
@@ -459,5 +476,6 @@ $(function(){
 <div id="footer">
     <p>Copyright (c) 2013 Sitename.com. All rights reserved. Images by <a href="http://fotogrph.com/">Fotogrph</a>. Design by <a href="http://www.freecsstemplates.org/" rel="nofollow">FreeCSSTemplates.org</a>.</p>
 </div>
+<!-- end #footer -->
 </body>
 </html>

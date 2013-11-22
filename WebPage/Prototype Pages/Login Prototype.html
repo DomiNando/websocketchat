@@ -12,175 +12,222 @@ Released   : 20130509
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta name="keywords" content="" />
-<meta name="description" content="" />
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>Login</title>
-<link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css" />
-<link href='http://fonts.googleapis.com/css?family=Abel|Satisfy' rel='stylesheet' type='text/css'>
-<link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Login</title>
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600" rel="stylesheet" type="text/css" />
+    <link href='http://fonts.googleapis.com/css?family=Abel|Satisfy' rel='stylesheet' type='text/css'>
+    <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script>
-//<!-----------TRANSFORMS a String Object to a JSON Object--------->
-$.fn.serializeObject = function()
-{
-    var o = {};
-    var a = this.serializeArray();
-    $.each(a, function() {
-        if (o[this.name] !== undefined) {
-            if (!o[this.name].push) {
-                o[this.name] = [o[this.name]];
-            }
-            o[this.name].push(this.value || '');
-        } else {
-            o[this.name] = this.value || '';
-        }
-    });
-    return o;
-};
-<!---------------login script-------------------------->
-$(function(){
-$("#gologin").click(function(){
-		
-	var JSONObject = JSON.stringify($("#login").serializeObject());
-	if(JSON.parse(JSONObject).username =="" ){
-		alert("Please fill the username field to log in");
-		return false;
-	}
-	if( JSON.parse(JSONObject).username == "employee" && JSON.parse(JSONObject).password == "password"){
-        window.location.replace("http://localhost:63342/Pages/Active Emergencies Prototype.html");
-        alert("User: employee with password: password logged in");
-        return false;
-        }
-    if(JSON.parse(JSONObject).username == "admin" && JSON.parse(JSONObject).password == "admin"){
-        window.location.replace("http://localhost:63342/Pages/Admin Home Prototype.html");
-        alert("User: admin with password: admin logged in");
-        return false;
-    }
-    if(JSON.parse(JSONObject).username == "statistic" ){
-        window.location.replace("http://localhost:63342/Pages/Statistic Prototype.html");
-        alert("User: statistic with password: logged in");
-        return false;
-    }
-	alert("Log in with: "+JSONObject+" is not permitted");
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        //<!-----------TRANSFORMS a String Object to a JSON Object--------->
+        $.fn.serializeObject = function()
+        {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function() {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
 
-    //$.ajax({
-        //    type: "POST",
-        //    url :"/",
-        //    contentType: "application/json",
-        //    data: "",
-        //    success : function(data) {
-        //
-        // },
-        //    error: function(data){
-        //        alert(data);
-        //    }
-        // });
-});
-});
 
-//<!--------------Password Recovery script--------------->
-$(function (){
-	
-$("#forgot").click(function(){
-	$("#sidebar1").css("display", "none");
-	$("#sidebar2").css("display", "inline");
-	$("#gorecovery").attr("disabled", false);
-	});
+        // <!-------------------------------------------login script---------------------------------------------->
+        $(function(){
+            $("#gologin").click(function(){
 
-});
+                var JSONObject = JSON.stringify($("#login").serializeObject());
+                if(JSON.parse(JSONObject).username == "" ){
+                    alert("Please fill the username field to log in");
+                    return false;
+                }else{
+                    if(JSON.parse(JSONObject).username == "stat" ){
+                        window.location.replace("/stat");
+                        return false;
 
-$(function(){
-$("#gorecovery").click(function(){
-		$("#agencyPhoneNumber").val("[agencyPhoneNumber]");
-		$("#usernamerecovery").val("[username]");
-	
-		var JSONObject = JSON.stringify($("#emailform").serializeObject());
-		if(JSON.parse(JSONObject).email == ""){
-			alert("Please fill in all the text fields for password recovery");
-			return false;
-		}
-		
-		alert("Password sent to email address "+JSON.parse(JSONObject).email);
-		
-		$("#sidebar2").css("display", "none");
-		$("#sidebar1").css("display", "inline");
-		$("#gorecovery").attr("disabled", true);
-		
-});
-});
+                    }
+                    if(JSON.parse(JSONObject).username == "mobile" ){
+                        window.location.replace("/mobile");
+                        return false;
+                    }
 
-</script>
+                    else{
+                        $.ajax({
+                            type: "POST",
+                            url :"/login",
+                            contentType: "application/json",
+                            data: JSONObject,
+                            success : function(data) {
+
+                                if(typeof data.username != "undefined"){
+                                    if(data.role == "admin"){
+                                        sessionStorage.setItem(data.username, data.role);
+                                        window.location.replace("/search");
+                                    }if(data.role == "employee"){
+                                        sessionStorage.setItem(data.username, data.role);
+                                        sessionStorage.setItem("agencyPhoneNumber", data.agencyPhoneNumber);
+                                        var employeeUserName = data.username;
+                                        var companyPhoneNumber = data.agencyPhoneNumber;
+                                        chat.setUserNameAndPhoneNumber(employeeUserName, companyPhoneNumber);
+                                        chat.model.login(companyPhoneNumber, employeeUserName);
+                                        window.location.replace("/sp");
+                                    }
+
+                                }else{
+                                    alert("Incorrect Username or Password");
+                                    return false;
+                                }
+                            },
+                            error: function(data){
+                                alert("Error Login POST");
+                            }
+                        });
+                    }
+
+                }
+
+
+
+
+                //$.ajax({
+                //    type: "POST",
+                //    url :"/",
+                //    contentType: "application/json",
+                //    data: "",
+                //    success : function(data) {
+                //
+                // },
+                //    error: function(data){
+                //        alert(data);
+                //    }
+                // });
+            });
+        });
+
+        //<!--------------Password Recovery script--------------->
+        $(function (){
+
+            $("#forgot").click(function(){
+                $("#sidebar1").css("display", "none");
+                $("#sidebar2").css("display", "inline");
+                $("#gorecovery").attr("disabled", false);
+            });
+
+        });
+
+        $(function(){
+            $("#gorecovery").click(function(){
+                $("#agencyPhoneNumber").val("[agencyPhoneNumber]");
+                $("#usernamerecovery").val("[username]");
+
+                var JSONObject = JSON.stringify($("#emailform").serializeObject());
+                if(JSON.parse(JSONObject).email == ""){
+                    alert("Please fill in all the text fields for password recovery");
+                    return false;
+                }else{
+                    $.ajax({
+                        type: "POST",
+                        url :"/retrievePassword",
+                        contentType: "application/json",
+                        data: JSONObject,
+                        success : function(data) {
+
+                            alert("Account password is: "+data.password);
+
+                            $("#sidebar2").css("display", "none");
+                            $("#sidebar1").css("display", "inline");
+                            $("#gorecovery").attr("disabled", true);
+                        },
+                        error: function(data){
+                            alert("Error retrieve password POST");
+                        }
+                    });
+                }
+
+
+
+            });
+        });
+
+    </script>
 
 </head>
 <body>
 <div id="wrapper">
-	<div id="header-wrapper">
-		<div id="header" class="container">
-			<div id="logo">
-			
-			</div>
-			
-		</div>
-	</div>
-	<!-- end #header -->
-	<div id="page">
-		<div id="content">
-			<div class="post">
-				<h2 class="title">Welcome to Emergency Center </h2>
-				<div class="entry">
-					
-					<h3>Official Website of the Emergency Assistant App!</h3>
-										
-				</div>
-			</div>
-		</div>
-		<!-- end #content -->
-		<div id="sidebar1">
-			<ul>
-				<li>
-					<h2>Login</h2>
-					<ul><form id="login" method="post">
-						<li> Username<br><input type="text" id="username" name="username" maxlength="30" size="20" required/> </li>
-						<li> Password<br><input type="password" id="password" name="password" maxlength="16" required/>
-						<li><div><p id="confirmation"></p></div>
-						<button id="gologin" type="submit" class="more" >Submit</button>
-						
-						</form>
-						
-						<button id="forgot" type="button" class="more">Forgot password?</button>
-						
-					</ul>
-				</li>
-			</ul>
-		</div>
-		
-		<div id="sidebar2">
-			<ul>
-				<li>
-					<h2>Password Recovery</h2>
-					<ul>
-						<form id="emailform" action="" method="post">
-							<li>E-mail Address:<input type="text" id="email" name="email" maxlength="25" required/></li>
-							<li><input type=hidden id="agencyPhoneNumber" name="agencyPhoneNumber"/></li>
-							<li><input type=hidden id="usernamerecovery" name="username"/></li>
-							<button id="gorecovery" type="submit" class="more" disabled>Submit</button>
-						</form>
-					
-					</ul>
-				</li>
-			</ul>
-		</div>
-		
-		<!-- end #sidebar -->
-		<div style="clear: both;">&nbsp;</div>
-	</div>
-	<!-- end #page --> 
-	
+    <div id="header-wrapper">
+        <div id="header" class="container">
+            <div id="logo">
+
+            </div>
+
+        </div>
+    </div>
+    <!-- end #header -->
+    <div id="page">
+        <div id="content">
+            <div class="post">
+                <h2 class="title">Welcome to Emergency Center </h2>
+                <div class="entry">
+
+                    <h3>Official Website of the Emergency Assistant App!</h3>
+
+                </div>
+            </div>
+        </div>
+        <!-- end #content -->
+        <div id="sidebar1">
+            <ul>
+                <li>
+                    <h2>Login</h2>
+                    <ul><form id="login" method="post">
+                        <li> Username<br><input type="text" id="username" name="username" maxlength="30" size="20"/> </li>
+                        <li> Password<br><input type="password" id="password" name="password" maxlength="16" />
+                        <li><div><p id="confirmation"></p></div>
+                            <button id="gologin" type="button" class="more" >Submit</button>
+
+                    </form>
+
+                        <button id="forgot" type="button" class="more">Forgot password?</button>
+
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div id="sidebar2">
+            <ul>
+                <li>
+                    <h2>Password Recovery</h2>
+                    <ul>
+                        <form id="emailform" action="" method="post">
+                            <li>E-mail Address:<input type="text" id="email" name="email" maxlength="25" required/></li>
+                            <li><input type=hidden id="agencyPhoneNumber" name="agencyPhoneNumber"/></li>
+                            <li><input type=hidden id="usernamerecovery" name="username"/></li>
+                            <button id="gorecovery" type="" class="more" disabled>Submit</button>
+                        </form>
+
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <!-- end #sidebar -->
+        <div style="clear: both;">&nbsp;</div>
+    </div>
+    <!-- end #page -->
+
 </div>
 <div id="footer">
-	<p>Copyright (c) 2013 Sitename.com. All rights reserved. Images by <a href="http://fotogrph.com/">Fotogrph</a>. Design by <a href="http://www.freecsstemplates.org/" rel="nofollow">FreeCSSTemplates.org</a>.</p>
+    <p>Copyright (c) 2013 Sitename.com. All rights reserved. Images by <a href="http://fotogrph.com/">Fotogrph</a>. Design by <a href="http://www.freecsstemplates.org/" rel="nofollow">FreeCSSTemplates.org</a>.</p>
 </div>
 <!-- end #footer -->
 </body>

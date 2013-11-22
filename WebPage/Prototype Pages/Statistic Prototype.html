@@ -234,10 +234,10 @@ $(function(){
                     var dataColumn = data.emergencyType.length;
 
                     $("#CSSTableGenerator").append('<table><tr>');
-                    $("#CSSTableGenerator").append('<td>  </td>');
+                    $("#CSSTableGenerator").append('<th>  </th>');
 
                     for(var i = 0; i < dataColumn; i++){
-                        $("#CSSTableGenerator").append('<td><a href="/emergencyResult?emergencyType='+data.emergencyType[i].emergencyType+'&agencyPhoneNumber='+agencyNumber+'">'+data.emergencyType[i].emergencyType+'</a></td>');
+                        $("#CSSTableGenerator").append('<th><a href="/emergencyResult?emergencyType='+data.emergencyType[i].emergencyType+'&agencyPhoneNumber='+agencyNumber+'">'+data.emergencyType[i].emergencyType+'</a></th>');
                     }
 
                     $("#CSSTableGenerator").append('</tr><tr>');
@@ -332,10 +332,10 @@ $(function (){
                     var dataColumn = data.emergencyType.length;
 
                     $("#CSSTableGenerator").append('<table><tr>');
-                    $("#CSSTableGenerator").append('<td>  </td>');
+                    $("#CSSTableGenerator").append('<th>  </th>');
 
                     for(var i = 0; i < dataColumn; i++){
-                        $("#CSSTableGenerator").append('<td><a href="/employeeResult?username='+data.username+'&emergencyType='+data.emergencyType[i].emergencyType+'&agencyPhoneNumber='+agencyNumber+'">'+data.emergencyType[i].emergencyType+'</a></td>');
+                        $("#CSSTableGenerator").append('<th><a href="/emergencyResult?emergencyType='+data.emergencyType[i].emergencyType+'&agencyPhoneNumber='+agencyNumber+'&username='+ data.username +'">'+data.emergencyType[i].emergencyType+'</a></th>');
                     }
 
                     $("#CSSTableGenerator").append('</tr><tr>');
@@ -397,6 +397,11 @@ $(function (){
     });
 });
 
+//<!----------------------------------------------------Log out-------------------------------------------------------->
+function logOut(){
+    sessionStorage.clear();
+    window.location.replace("/");
+};
 </script>
 
 </head>
@@ -409,7 +414,7 @@ $(function (){
             </div>
             <div id="menu">
                 <ul>
-                    <li><a href="http://localhost:63342/Pages/Login Prototype.html">Log out</a></li>
+                    <li><a href="javascript:void(0)" onclick="logOut()">Log out</a></li>
 
                 </ul>
             </div>
@@ -494,34 +499,5 @@ $(function (){
     <p>Copyright (c) 2013 Sitename.com. All rights reserved. Images by <a href="http://fotogrph.com/">Fotogrph</a>. Design by <a href="http://www.freecsstemplates.org/" rel="nofollow">FreeCSSTemplates.org</a>.</p>
 </div>
 <!-- end #footer -->
-<!-- START CHAT -->
-<div id="chat-bar">
-    <div id="chat">
-        <header>
-            <span id="minimize-chat" class="widget">_</span>
-            <span id="close-chat" class="widget">x</span>
-        </header>
-        <div id="content">
-            <ul id="messages">
-            </ul>
-        </div>
-        <div id="input">
-            <input type="text" placeholder="Send Message">
-        </div>
-    </div>
-</div>
 </body>
-<link href='http://fonts.googleapis.com/css?family=Varela+Round' rel='stylesheet' type='text/css'>
-<link href="main.css" rel="stylesheet">
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.1.2/handlebars.min.js"></script>
-<script src="stapes.js"></script>
-<script type="text/javascript" src="sock.js"></script>
-
-<script type="text/javascript" src="chatView.js"></script>
-<script type="text/javascript" src="chatModels.js"></script>
-<script type="text/javascript" src="chatStore.js"></script>
-<script type="text/javascript" src="chatController.js"></script>
-<script type="text/javascript" src="chat.js"></script>
-<!-- END CHAT -->
 </html>

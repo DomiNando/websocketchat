@@ -237,6 +237,8 @@ a:hover {
     border-radius: 7px;
 
 }
+
+
 .post {
     overflow: hidden;
     margin-bottom: 40px;
@@ -770,6 +772,7 @@ ul.style1 .first {
 }
 #CSSTableGenerator td, #CSSTableGenerator th
 {
+    width: 100%;
     font-size:1em;
     border:1px solid #B50D0D;
     padding:3px 7px 2px 7px;

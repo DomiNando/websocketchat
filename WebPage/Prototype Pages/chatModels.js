@@ -19,14 +19,16 @@ var ChatModel = Stapes.subclass({
         this.server.onclose = this.onClose();
     },
 
-    login: function(phoneNumber) {
+    login: function(phoneNumber, userName) { //CAMBIE!!
         this.username = 'Me';
         this.phoneNumber = phoneNumber || null;
+        this.nickname = userName;  //CAMBIE!!!
 
         var data = {
             'event': 'login',
             'data': {
-                'phonenumber': this.phoneNumber
+                'phonenumber': this.phoneNumber,
+                'nickname': this.nickname  //CAMBIE!!
             }
         };
 

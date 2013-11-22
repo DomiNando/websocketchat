@@ -54,8 +54,9 @@ var ChatController  = Stapes.subclass({
                 this.view.show();
             },
 
-            'open': function() {
-                this.model.login(1234567890);
+            'open': function() { //CAMBIE!!!!
+            	this.model.login(this.phoneNumber, this.username); //cambie!!
+                //this.model.login(1234567890);
             },
 
             'new message': function() {
@@ -86,5 +87,11 @@ var ChatController  = Stapes.subclass({
         } else {
             this.view.hide();
         }
+    },
+    
+    setUserNameAndPhoneNumber: function(username, phonenumber) {
+    	this.username = username;
+    	this.phonenumber = phonenumber;
+    
     }
 });

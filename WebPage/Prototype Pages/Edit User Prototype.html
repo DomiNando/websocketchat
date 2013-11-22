@@ -58,24 +58,86 @@ Released   : 20130509
                     contentType: "application/json",
                     data: "username="+sendData[1],
                     success : function(data) {
+                        if(typeof data.username != "undefined"){
 
-                        $("#oldUsername").val(data.username);
-                        $("#name").val(data.name);
-                        $("#username").val(data.username);
-                        $("#password").val(data.password);
-                        $("#email").val(data.email);
-                        $("#role").val(data.role);
-                        $("#agencyPhoneNumber").val(data.agencyPhoneNumber);
+                            $("#oldUsername").val(data.username);
+                            $("#name").val(data.name);
+                            $("#username").val(data.username);
+                            $("#password").val(data.password);
+                            $("#email").val(data.email);
+                            $("#role").val(data.role);
+                            $("#agencyPhoneNumber").val(data.agencyPhoneNumber);
+                        }else{
+                            alert("There is no information for that request");
+                        }
+
 
                     },
                     error: function(data){
-                        alert("error user edit");
+                        alert("Error user edit GET");
                     }
                 });
 
             });
         });
 
+        //<!-----------------------------------------Verifies User un DB----------------------------------------------->
+        $(function(){
+            $("#username").blur(function(){
+                var user = $("#username").val();
+
+                $.ajax({
+                    type: "GET",
+                    url :"/validateUser",
+                    contentType: "application/json",
+                    data: "username="+user,
+                    success : function(data) {
+                        if(data.exist == true){
+                            alert("User already exist in the Database, choose another Username");
+                            $("#submit").attr("disabled", true);
+                            return false;
+                        }else{
+                            alert("User does not exist in the Database");
+                            $("#submit").attr("disabled", false);
+                            return false;
+                        }
+                    },
+                    error: function(data){
+                        alert("Error verifying User GET");
+                    }
+                });
+            });
+        });
+        //<!-----------------------------------------Checks for Service inside the DB---------------------------------->
+        $(function(){
+            $("#altPhoneNumber0").keyup(function(){
+                if($("#agencyPhoneNumber").val().length == 10){
+                    var phone = $("#agencyPhoneNumber").val();
+
+                    $.ajax({
+                        type: "GET",
+                        url :"/validateAgency",
+                        contentType: "application/json",
+                        data: "agencyPhoneNumber="+ phone,
+                        success : function(data) {
+                            if( data.exist == true){
+                                alert("Service already exist in the Database");
+                                $("#submit").attr("disabled", false);
+                                return false;
+                            }else{
+                                alert("Service does not exist in the Database, you may not add an employee of a phantom company");
+                                $("#submit").attr("disabled", true);
+                                return false;
+                            }
+
+                        },
+                        error: function(data){
+                            alert("Error verifying Service GET");
+                        }
+                    });
+                }
+            });
+        });
         //<!---------------------------------------Updates user to the system------------------------------------------>
         $(function(){
             $("#submit").click(function(){
@@ -93,11 +155,16 @@ Released   : 20130509
                         contentType: "application/json",
                         data:JSONObject,
                         success : function(data) {
-                            alert("success");
-                            $("#main").trigger("reset");
+                            if(data.result == true){
+                                alert("User successfully added to the Database");
+                                window.location.replace("/search");
+                            }else{
+                                alert("Error user not added");
+                                $("#main").trigger("reset");
+                            }
                         },
                         error: function(data){
-                            alert("error");
+                            alert("Error update user POST");
                         }
                     });
 
@@ -105,6 +172,11 @@ Released   : 20130509
                 return false;
             });
         });
+        //<!----------------------------------------------------Log out-------------------------------------------------------->
+        function logOut(){
+            sessionStorage.clear();
+            window.location.replace("/");
+        };
     </script>
 
 </head>
@@ -117,10 +189,10 @@ Released   : 20130509
             </div>
             <div id="menu">
                 <ul>
-                    <li><a href="http://localhost:63342/Pages/Admin Home Prototype.html">Home</a></li>
+                    <li><a href="/search">Home</a></li>
                     <li class="current_page_item"><a>Add User</a></li>
-                    <li><a href="http://localhost:63342/Pages/Add Service Prototype.html">Add Service</a></li>
-                    <li><a href="http://localhost:63342/Pages/Login Prototype.html">Log out</a></li>
+                    <li><a href="/newService">Add Service</a></li>
+                    <li><a href="javascript:void(0)" onclick="logOut()">Log out</a></li>
 
                 </ul>
             </div>

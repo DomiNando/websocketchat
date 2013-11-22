@@ -27,6 +27,10 @@ Released   : 20130509
         var countA = 0;
         var countP = 0;
 
+        $(window).load(function(){
+           $("#la").hide();
+           $("#lo").hide();
+        });
         //<!-----------TRANSFORMS a String Object to a JSON Object--------->
         $.fn.serializeObject = function()
         {
@@ -156,17 +160,74 @@ Released   : 20130509
                         contentType: "application/json",
                         data:JSONObject,
                         success : function(data) {
-                            alert(data.result);
-                            $("#addService").trigger("reset");
+                            if(data.result == true){
+                                alert("Service added to the Database");
+                                window.location.replace("/search");
+                            }else{
+                                alert("Error Service not added");
+                                $("#addService").trigger("reset");
+                            }
+
                         },
                         error: function(data){
-                            alert("error");
+                            alert("Error add POST");
                         }
                     });
 
 
                 }
                 return false;
+            });
+        });
+
+        //<!----------------------------------------------------Log out------------------------------------------------>
+        function logOut(){
+            sessionStorage.clear();
+            window.location.replace("/");
+        };
+
+        //<!---------------------------------------------------Check if Category is Hospitals-------------------------->
+        $(function(){
+           $("#category").keyup(function(){
+              if($("#category").val() == "Hospital" || $("#category").val() == "hospital"){
+                  $("#la").show();
+                  $("#lo").show();
+              }else{
+                   $("#la").hide();
+                   $("#lo").hide();
+               }
+           });
+        });
+
+        //<!-----------------------------------------Checks for Service inside the DB---------------------------------->
+        $(function(){
+            $("#altPhoneNumber0").keyup(function(){
+                  if($("#altPhoneNumber0").val().length == 10){
+                       var phone = $("#altPhoneNumber0").val();
+
+                      $.ajax({
+                          type: "GET",
+                          url :"/validateAgency",
+                          contentType: "application/json",
+                          data: "agencyPhoneNumber="+ phone,
+                          success : function(data) {
+                            if( data.exist == true){
+                                alert("Service already exist in the Database, cannot add a service with equal phone number as other company");
+                                $("#add").attr("disabled", true);
+                                return false;
+                            }else{
+                                alert("Service does not exist in the Database");
+                                $("#add").attr("disabled", false);
+                                return false;
+
+                            }
+
+                       },
+                          error: function(data){
+                              alert("Error verifying Service");
+                          }
+                       });
+                  }
             });
         });
     </script>
@@ -184,7 +245,7 @@ Released   : 20130509
                     <li><a href="/search">Home</a></li>
                     <li><a href=/newUser>Add User</a></li>
                     <li class="current_page_item"><a>Add Service</a></li>
-                    <li><a href="http://localhost:63342/Pages/Login Prototype.html">Log out</a></li>
+                    <li><a href="javascript:void(0)" onclick="logOut()">Log out</a></li>
 
                 </ul>
             </div>
@@ -200,14 +261,16 @@ Released   : 20130509
                 <div class="entry">
                     <form id="addService" action="" method="post">
                         <h3>Agency Name:<input type="text"  name="agencyName" maxlength="50" size="50" required/></h3><br>
-                        <h3>Category:<input type="text"  name="category" maxlength="40" size="30" required/></h3><br>
+                        <h3>Category:<input type="text" id="category" name="category" maxlength="40" size="30" required/></h3><br>
                         <h3>Area:<input type="text" name="altArea0" maxlength="40" size="30" required/></h3><button type="button" id="moreA">Add Field</button><button type="button" id="lessA" disabled>Less Fields</button>
                         <div id="ALTA"></div>
-                        <h3>Telephone:<input type="text"  name="altPhoneNumber0" maxlength="10" size="10" required/></h3><button type="button" id="moreP">Add Field</button><button type="button" id="lessP" disabled>Less Fields</button><br>
+                        <h3>Telephone:<input type="text" id="altPhoneNumber0" name="altPhoneNumber0" maxlength="10" size="10" required/></h3><button type="button" id="moreP">Add Field</button><button type="button" id="lessP" disabled>Less Fields</button><br>
                         <div id="ALTP"></div>
                         <h3>City:<input type="text"  name="city" maxlength="40" size="30" required/></h3><br>
                         <h3>State:<input type="text"  name="state" maxlength="2" size="3" required/></h3><br>
-                        <h3>Country<input type="text"  name="country" maxlength="40" size="30" required/></h3><br><br>
+                        <h3>Country:<input type="text"  name="country" maxlength="40" size="30" required/></h3><br>
+                        <h3 id="la">Latitude:<input type="text" name="latitude"/> </h3><br>
+                        <h3 id="lo">Longitude:<input type="text" name="longitude"/> </h3><br><br>
                         <input type=hidden id="countA" name="altAreaCount"/>
                         <input type=hidden id="countB" name="altPhoneCount"/>
                     </form>

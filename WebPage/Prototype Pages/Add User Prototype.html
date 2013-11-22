@@ -41,7 +41,64 @@ Released   : 20130509
             });
             return o;
         };
-        //<!---------------ADD user to the system-------------------------->
+        //<!-----------------------------------------Verifies User un DB----------------------------------------------->
+        $(function(){
+            $("#username").blur(function(){
+                var user = $("#username").val();
+
+                $.ajax({
+                    type: "GET",
+                    url :"/validateUser",
+                    contentType: "application/json",
+                    data: "username="+user,
+                    success : function(data) {
+                        if(data.exist == true){
+                            alert("User already exist in the Database, choose another Username");
+                            $("#submit").attr("disabled", true);
+                            return false;
+                        }else{
+                            alert("User does not exist in the Database");
+                            $("#submit").attr("disabled", false);
+                            return false;
+                        }
+                    },
+                    error: function(data){
+                        alert("Error verifying User GET");
+                    }
+                });
+            });
+        });
+        //<!-----------------------------------------Checks for Service inside the DB---------------------------------->
+        $(function(){
+            $("#altPhoneNumber0").keyup(function(){
+                if($("#altPhoneNumber0").val().length == 10){
+                    var phone = $("#altPhoneNumber0").val();
+
+                    $.ajax({
+                        type: "GET",
+                        url :"/validateAgency",
+                        contentType: "application/json",
+                        data: "agencyPhoneNumber="+ phone,
+                        success : function(data) {
+                            if( data.exist == true){
+                                alert("Service already exist in the Database");
+                                $("#submit").attr("disabled", false);
+                                return false;
+                            }else{
+                                alert("Service does not exist in the Database, you may not add an employee of a phantom company");
+                                $("#submit").attr("disabled", true);
+                                return false;
+                            }
+
+                        },
+                        error: function(data){
+                            alert("Error verifying Service");
+                        }
+                    });
+                }
+            });
+        });
+        //<!------------------------------------------ADD user to the system------------------------------------------->
         $(function(){
             $("#submit").click(function(){
 
@@ -58,18 +115,30 @@ Released   : 20130509
                         contentType: "application/json",
                         data:JSONObject,
                         success : function(data) {
-                        alert(data.result);
-                        $("#main").trigger("reset");
-                     },
+                            if(data.result == true){
+                                alert("User successfully added to the Database");
+                                window.location.replace("/search");
+                            }else{
+                                alert("Error user not added");
+                                $("#main").trigger("reset");
+                            }
+
+                        },
                         error: function(data){
-                            alert(data.result);
+                            alert("Error Add User POST");
                         }
-                     });
+                    });
 
                 }
                 return false;
             });
         });
+
+        //<!----------------------------------------------------Log out-------------------------------------------------------->
+        function logOut(){
+            sessionStorage.clear();
+            window.location.replace("/");
+        };
     </script>
 
 </head>
@@ -85,7 +154,7 @@ Released   : 20130509
                     <li><a href="/search">Home</a></li>
                     <li class="current_page_item"><a>Add User</a></li>
                     <li><a href="/newService">Add Service</a></li>
-                    <li><a href="http://localhost:63342/Pages/Login Prototype.html">Log out</a></li>
+                    <li><a href="javascript:void(0)" onclick="logOut()">Log out</a></li>
 
                 </ul>
             </div>
@@ -101,7 +170,7 @@ Released   : 20130509
                 <div class="entry">
                     <form id="main" action="" method="post">
                         <h3>Name:<input type="text"  name="name" maxlength="50" size="50"/></h3><br>
-                        <h3>Username:<input type="text"  name="username" maxlength="40" size="30"/></h3><br>
+                        <h3>Username:<input type="text" id="username" name="username" maxlength="40" size="30"/></h3><br>
                         <h3>Password:<input type="text"  name="password" maxlength="16" size="30"/></h3><br>
                         <h3>E-mail:<input type="email"  name="email" pattern="[^ @]*@[^ @]*" /></h3><br>
                         <h3>User Type:<select  name="role" size="1" placeholder="Select Type" >
@@ -109,7 +178,7 @@ Released   : 20130509
                             <option value="employee">Employee</option>
                         </select>
                         </h3><br>
-                        <h3>Company Phone Number:<input type="text"  name="agencyPhoneNumber" maxlength="10" size="10"/></h3><br><br>
+                        <h3>Company Phone Number:<input type="text" id="altPhoneNumber0" name="agencyPhoneNumber" maxlength="10" size="10"/></h3><br><br>
                     </form>
 
 
