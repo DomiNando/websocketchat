@@ -253,7 +253,7 @@ function ChatServer(chat_port, chat_prefix) {
                                         users[data.phonenumber] = {
                                             userconnection: connection,
                                             id: data.phonenumber + "" + connection.remotePort,
-                                            userName: data.nickname || 'guest_' + connection.remotePort
+                                            userName: data.nickname || data.phonenumber
                                         };
                                     }
 
