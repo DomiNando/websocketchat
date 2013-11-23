@@ -242,6 +242,9 @@ function ChatServer(chat_port, chat_prefix) {
 
                             case "login":
                                 // check if this user was loged in before
+                                if (data.username) {
+                                	data.phonenumber = data.username;
+                                	}
                                 if (data.phonenumber) {
                                     if (users[data.phonenumber]) {
                                         console.log('[login user]');
