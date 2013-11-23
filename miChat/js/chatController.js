@@ -55,7 +55,11 @@ var ChatController  = Stapes.subclass({
             },
 
             'open': function() { //CAMBIE!!!!
-            	this.model.login(this.phoneNumber, this.username); //cambie!!
+            	// this.model.login(this.phoneNumber, this.username); //cambie!!
+            	var _db = window.sessionStorage;
+            	var username = _db.getItem("username");
+            	var phonenumber = _db.getItem("agencyPhoneNumber");
+            	this.model.login(phonenumber, username);
                 //this.model.login(1234567890);
             },
 
