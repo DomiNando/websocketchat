@@ -21,6 +21,8 @@ function ChatServer(chat_port, chat_prefix) {
         console.log('chat is listening on port', port_number);
     });
 
+    main_server.use('/js', express.static(__dirname + '/js'));
+
     // configuration an utility variables
     //var util = require('./routes/util');
     var util = {
