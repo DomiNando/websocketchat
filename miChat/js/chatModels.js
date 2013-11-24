@@ -1,13 +1,15 @@
 /*global SockJS, Stapes*/
 'use strict';
 
+var _db = window.localStorage;
+
 var ChatModel = Stapes.subclass({
     setDestinationId: function(id) {
         if (id) {
             this.destinationId = id;
-            window.localStorage['current_id'] = id;
+            _db.setItem('current_id', id);
         } else {
-            return this.destinationId || window.localStorage['current_id'];
+            return this.destinationId || _db.getItem('current_id');
         }
     },
 
@@ -140,7 +142,7 @@ var ChatModel = Stapes.subclass({
             'event': 'message',
                 'data' : {
                     'message' : message,
-                    'destinationId': this.destinationId || window.localStorage['current_id']
+                    'destinationId': this.destinationId || _db.getItem('current_id')
                 }   
         };
 
