@@ -142,9 +142,11 @@ var ChatModel = Stapes.subclass({
             'event': 'message',
                 'data' : {
                     'message' : message,
-                    'destinationId': this.destinationId || _db.getItem('current_id')
+                    'destinationId': _db.getItem('current_id')
                 }   
         };
+
+        
 
         this.sendData(data);
 
