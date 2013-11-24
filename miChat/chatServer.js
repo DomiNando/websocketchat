@@ -250,8 +250,7 @@ function ChatServer(chat_port, chat_prefix) {
                                     } else {
                                         // let's register this guy!
                                         console.log('[adding user]');
-                                        var username = data.nickname || data.phonenumber;
-                                        users[username] = {
+                                        users[data.phonenumber] = {
                                             userconnection: connection,
                                             id: data.phonenumber + "" + connection.remotePort,
                                             userName: data.nickname || data.phonenumber
