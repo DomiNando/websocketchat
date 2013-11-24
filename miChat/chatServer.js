@@ -16,7 +16,9 @@ function ChatServer(chat_port, chat_prefix) {
   var port_number = chat_port || process.env.PORT || 3500;
   var prefix = chat_prefix || '/chat';
 
-  
+    // main chat code is here
+  var users = {};
+  var user_timeouts = [];
 
   var util = {
     jsonTest: function (text) { // function to test if a string converts to valid JSON.
@@ -84,10 +86,6 @@ function ChatServer(chat_port, chat_prefix) {
     }
   };
 
-  // main chat code is here
-  var users = {};
-  var user_timeouts = [];
-
   this.start = function () {
     // start servers
     http_server.listen(port_number, function () { console.log('chat is listening on port', port_number); });
@@ -100,7 +98,7 @@ function ChatServer(chat_port, chat_prefix) {
       console.log(connection.remoteAddress + ":" + connection.remotePort);
 
       connection.on('data', function (request) {
-        _self.respond(connection, request);
+        _self.respond(connection, request, users);
       });
 
       // here we simply dereference the connection from the users list
@@ -111,7 +109,7 @@ function ChatServer(chat_port, chat_prefix) {
     });
   };
 
-  this.respond = function(connection, request) {
+  this.respond = function(connection, request, users) {
     // let's make sure the request is not empty or not valid json
     if (request === null || !util.jsonTest(request)) {
       console.log(request + " from " + connection.remoteAddress + ":" + connection.remotePort);
@@ -176,7 +174,7 @@ function ChatServer(chat_port, chat_prefix) {
         if (data) {
           var fullDate = util.fullDate();
 
-          var responseMessage = data.message;
+          var responseMessage = data.disconnected ? 'has disconnected' : data.message;
           responseMessage += " " + fullDate;
           var destination = data.destinationId;
 
@@ -212,7 +210,6 @@ function ChatServer(chat_port, chat_prefix) {
         } else if (users[dest]) {
 
           var destino = users[dest];
-          console.log("[destination] ", destino);
 
           console.log("[connecting to] ", destino);
           var rspv = {
@@ -257,7 +254,8 @@ function ChatServer(chat_port, chat_prefix) {
             users[user] = {
               userconnection: connection,
               id: data.phonenumber + "" + connection.remotePort,
-              userName: user // This might be causing problems.
+              userName: user, // This might be causing problems.
+              phonenumber: data.phonenumber
             };
           }
 
