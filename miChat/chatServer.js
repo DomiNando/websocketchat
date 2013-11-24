@@ -99,10 +99,14 @@ function ChatServer(chat_port, chat_prefix) {
       console.log("[port] ", connection.remotePort);
       console.log(connection.remoteAddress + ":" + connection.remotePort);
 
-      connection.on('data', _self.respond(request));
+      connection.on('data', function (request) {
+        _self.respond(request);
+      });
 
       // here we simply dereference the connection from the users list
-      connection.on('close', _self.close());
+      connection.on('close', function () {
+        _self.close();
+      });
 
     });
   };
@@ -241,7 +245,7 @@ function ChatServer(chat_port, chat_prefix) {
 
       case "login":
         // check if this user was loged in before
-        var user = data.nickname || data.phonenumber;
+        var user = data.nickname || data.phonenumber || 'guest_' + connection.remotePort;
         if (user) {
           if (users[user]) {
             console.log('[login user]');
