@@ -174,6 +174,8 @@ function ChatServer(chat_port, chat_prefix) {
         if (data) {
           var fullDate = util.fullDate();
 
+          // If the boolean data.disconnected is true, then set the response message to
+          // 'has disconnected', to let the other user know that 
           var responseMessage = data.disconnected ? 'has disconnected' : data.message;
           responseMessage += " " + fullDate;
           var destination = data.destinationId;
@@ -242,18 +244,18 @@ function ChatServer(chat_port, chat_prefix) {
 
       case "login":
         // check if this user was loged in before
-        var user = data.nickname || data.phonenumber || 'guest_' + connection.remotePort;
+        var user = data.nickname || data.phonenumber;
         if (user) {
           if (users[user]) {
             console.log('[login user]');
-            clearTimeout(user_timeouts[data.phonenumber]);
+            clearTimeout(user_timeouts[user]);
             users[user].userconnection = connection;
           } else {
             // let's register this guy!
             console.log('[adding user]');
             users[user] = {
               userconnection: connection,
-              id: data.phonenumber + "" + connection.remotePort,
+              id: user + "" + connection.remotePort,
               userName: user, // This might be causing problems.
               phonenumber: data.phonenumber
             };
