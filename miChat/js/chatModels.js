@@ -71,6 +71,7 @@ var ChatModel = Stapes.subclass({
                             'user': userName,
                             'class': "external" 
                         };
+                        console.log('data', dt);
                         model.emit('new message', dt);
                         model.addMessage(dt);
                         break;
