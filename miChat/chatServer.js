@@ -100,18 +100,18 @@ function ChatServer(chat_port, chat_prefix) {
       console.log(connection.remoteAddress + ":" + connection.remotePort);
 
       connection.on('data', function (request) {
-        _self.respond(request);
+        _self.respond(connection, request);
       });
 
       // here we simply dereference the connection from the users list
       connection.on('close', function () {
-        _self.close();
+        _self.close(connection);
       });
 
     });
   };
 
-  this.respond = function(request) {
+  this.respond = function(connection, request) {
     // let's make sure the request is not empty or not valid json
     if (request === null || !util.jsonTest(request)) {
       console.log(request + " from " + connection.remoteAddress + ":" + connection.remotePort);
@@ -277,7 +277,7 @@ function ChatServer(chat_port, chat_prefix) {
     }
   };
 
-  this.close = function() {
+  this.close = function(connection) {
     console.log("[closed connection] ", connection.remoteAddress + ":" + connection.remotePort);
     // console.log("users", users); // uncomment for debuging
     for (var user in users) {
