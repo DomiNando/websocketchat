@@ -55,37 +55,13 @@ function ChatServer(chat_port, chat_prefix) {
     },
 
     // method to return list of users based on their phone numbers
-    getUsersFromNumber: function (number) {
-      // var users_that_match = [];
-      /*for (var number in list_of_numbers) {
-        for (var user in users) {
-          var current_user = users[user];
-
-          if (current_user.phonenumber === number && current_user.available) {
-            users_that_match.push(current_user.id); // instead do a return
-          }
-        }
-      }*/
-
-      /*var userId;
-      Object.keys(users).forEach(function (user) {
-        if (user.phonenumber == number && user.available) {
-          userId = user.id;
-        }
-      });*/
-      
+    getUsersFromNumber: function (number) {     
       var current_user;
 
       for (var user in users) {
         current_user = users[user];
 
-        console.log('[current user in list]', current_user.userName);
-        console.log('[available]', current_user.available);
-        console.log('[phonenumber]', current_user.phonenumber);
-        console.log('[number is]', number);
-        console.log('[phonenumber test]', current_user.phonenumber === number);
         if (current_user.phonenumber === number && current_user.available) {
-          console.log('[breaking out]');
           return current_user.userName;    // if we find a match let's return it
         }
       }
@@ -184,52 +160,6 @@ function ChatServer(chat_port, chat_prefix) {
       console.log("[event]", eventType);
 
       switch (eventType) {
-
-        /* case "new user": // new user is depreceated, don't use.
-        if (data.phoneNumber) {
-          data.userName = data.phoneNumber;
-        } else if (data.userName) {
-          console.log("[using default username]");
-        } else {
-          util.sendError(connection, 406, "malformated user entry");
-          break;
-        }
-
-
-        var userName = data.userName;
-
-
-        if (users[userName]) {
-          util.sendError(connection, 406, "username already in use");
-          var response = {
-            "event": "user not ok",
-            "data": {
-              "errorMessage": "Username is already taken."
-            }
-          };
-          util.sendMessage(connection, response);
-        } else {
-          var userId = userName + "" + connection.remotePort;
-          users[userName] = {
-            userconnection: connection,
-            id: userId,
-            userName: userName
-          };
-
-          console.log(users[userName].userconnection);
-          var res = {
-            "event": "user ok",
-            "data": {
-              "userId": userId
-            }
-          };
-
-          util.sendMessage(connection, res);
-
-          connection.userName = userName;
-        }
-
-        break; */
 
       case "message":
         if (data) {

@@ -2,6 +2,7 @@
 'use strict';
 
 var _db = window.sessionStorage;
+_db.setItem('current_id', '');
 
 var ChatModel = Stapes.subclass({
   setDestinationId: function (id) {
