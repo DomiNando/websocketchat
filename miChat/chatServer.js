@@ -350,7 +350,7 @@ function ChatServer(chat_port, chat_prefix) {
 
       case 'set available':
         user = data.nickname;
-        users[users].available = true;
+        users[user].available = true;
 
         break;
 
