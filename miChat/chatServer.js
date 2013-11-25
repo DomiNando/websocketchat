@@ -322,7 +322,7 @@ function ChatServer(chat_port, chat_prefix) {
         var user = util.getUsersFromNumber(number);
         var response_message = {};
 
-        if (userId) {
+        if (user) {
           response_message = {
             "event": "user_ready",
             "data": {
