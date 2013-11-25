@@ -335,7 +335,7 @@ function ChatServer(chat_port, chat_prefix) {
           };
         }
 
-        util.sendMessage(response_message);
+        util.sendMessage(connection, response_message);
         break;
 
       case 'set available':
