@@ -81,7 +81,9 @@ function ChatServer(chat_port, chat_prefix) {
 
         console.log('[current user in list]', current_user.userName);
         console.log('[available]', current_user.available);
-        console.log('[phonenumber]', current_user.phonenumber == number);
+        console.log('[phonenumber]', current_user.phonenumber);
+        console.log('[number is]', number);
+        console.log('[phonenumber test]', current_user.phonenumber === number);
         if (current_user.phonenumber === number && current_user.available) {
           console.log('[breaking out]');
           break;    // if we find a match let's break out of the loop
