@@ -67,19 +67,23 @@ function ChatServer(chat_port, chat_prefix) {
         }
       }*/
 
-      var userId;
+      /*var userId;
       Object.keys(users).forEach(function (user) {
         if (user.phonenumber == number && user.available) {
           userId = user.id;
         }
-      });
+      });*/
+      
+      for (var user in users) {
+        var current_user = users[user];
 
-      if (userId !== '') {
-        return userId;
-      } else {
-        // if no users were found return false
-        return false;
+        if (current_user.phonenumber === number && current_user.available) {
+          return current_user.userName;
+        }
       }
+
+      // if no users were found return false
+      return false;
 
       /*console.log(users_that_match.toString());
       return users_that_match;*/
@@ -313,15 +317,16 @@ function ChatServer(chat_port, chat_prefix) {
         break;
 
       case 'get users':
+        // NEW! THIS IS NEW! BECAUSE IT IS NEW!!!!
         var number = data.number;
-        var userId = util.getUsersFromNumber(number);
+        var user = util.getUsersFromNumber(number);
         var response_message = {};
 
         if (userId) {
           response_message = {
             "event": "user_ready",
             "data": {
-              "userId": userId
+              "user": user
             }
           };
         } else {
