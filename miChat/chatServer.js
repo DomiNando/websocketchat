@@ -77,6 +77,7 @@ function ChatServer(chat_port, chat_prefix) {
       for (var user in users) {
         var current_user = users[user];
 
+        console.log('[current user in list]', current_user.userName);
         if (current_user.phonenumber === number && current_user.available) {
           return current_user.userName;
         }
