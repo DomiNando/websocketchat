@@ -56,6 +56,7 @@ function ChatServer(chat_port, chat_prefix) {
 
     // method to return list of users based on their phone numbers
     getUsersFromNumber: function (number) {
+      number = number.splice(0,1); // remove frist space from number!
       // var users_that_match = [];
       /*for (var number in list_of_numbers) {
         for (var user in users) {
@@ -86,12 +87,12 @@ function ChatServer(chat_port, chat_prefix) {
         console.log('[phonenumber test]', current_user.phonenumber === number);
         if (current_user.phonenumber === number && current_user.available) {
           console.log('[breaking out]');
-          break;    // if we find a match let's break out of the loop
+          return current_user.userName;    // if we find a match let's return it
         }
       }
 
       // if no users were found return false
-      return current_user.userName || false;
+      return false;
 
       /*console.log(users_that_match.toString());
       return users_that_match;*/
