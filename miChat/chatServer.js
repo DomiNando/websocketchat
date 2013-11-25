@@ -23,7 +23,7 @@ function ChatServer(chat_port, chat_prefix) {
   var user_timeouts = [];
 
   var util = {
-    jsonTest: function(text) { // function to test if a string converts to valid JSON.
+    jsonTest: function (text) { // function to test if a string converts to valid JSON.
 
       try {
         JSON.parse(text);
@@ -34,7 +34,7 @@ function ChatServer(chat_port, chat_prefix) {
       return true;
     },
 
-    sendError: function(connection, code, message) {
+    sendError: function (connection, code, message) {
       var mes = {
         "event": "error",
         "data": {
@@ -46,7 +46,7 @@ function ChatServer(chat_port, chat_prefix) {
       connection.write(JSON.stringify(mes));
     },
 
-    getConnection: function(destination) {
+    getConnection: function (destination) {
       for (var user in users) {
         if (users[user].id === destination) {
           return users[user].userconnection;
@@ -55,7 +55,7 @@ function ChatServer(chat_port, chat_prefix) {
     },
 
     // method to return list of users based on their phone numbers
-    getUsersFromNumber: function(number) {
+    getUsersFromNumber: function (number) {
       var users_that_match = [];
       /*for (var number in list_of_numbers) {
         for (var user in users) {
@@ -67,21 +67,29 @@ function ChatServer(chat_port, chat_prefix) {
         }
       }*/
 
-      Object.keys(users).forEach(function(user) {
+      var userId;
+      Object.keys(users).forEach(function (user) {
         if (user.phonenumber == number && user.available) {
-          return user.id;
+          userId = user.id;
         }
-      })
+      });
 
-      console.log(users_that_match.toString());
-      return users_that_match;
+      if (userId !== '') {
+        return userId;
+      } else {
+        // if no users were found return false
+        return false;
+      }
+
+      /*console.log(users_that_match.toString());
+      return users_that_match;*/
     },
 
-    sendMessage: function(connection, message) {
+    sendMessage: function (connection, message) {
       connection.write(JSON.stringify(message));
     },
 
-    getUser: function(connection) {
+    getUser: function (connection) {
       for (var user in users) {
         if (users[user].userconnection == connection) {
           console.log("[returning user] ", users[user].userName);
@@ -92,7 +100,7 @@ function ChatServer(chat_port, chat_prefix) {
       return false;
     },
 
-    fullDate: function() {
+    fullDate: function () {
       var today = new Date();
       var dd = today.getDate();
       var mm = today.getMonth() + 1;
@@ -111,13 +119,15 @@ function ChatServer(chat_port, chat_prefix) {
     }
   };
 
-  this.start = function() {
+  this.start = function () {
     // start servers
-    http_server.listen(port_number, function () { 
-      console.log('chat is listening on port', port_number); 
+    http_server.listen(port_number, function () {
+      console.log('chat is listening on port', port_number);
     });
 
-    chat_server.installHandlers(http_server, { prefix: prefix });
+    chat_server.installHandlers(http_server, {
+      prefix: prefix
+    });
 
     main_server.use('/js', express.static(__dirname + '/js'));
 
@@ -126,14 +136,18 @@ function ChatServer(chat_port, chat_prefix) {
       console.log("[port] ", connection.remotePort);
       console.log(connection.remoteAddress + ":" + connection.remotePort);
 
-      connection.on('data', function (request) { _self.respond(connection, request, users); });
+      connection.on('data', function (request) {
+        _self.respond(connection, request, users);
+      });
 
       // here we simply dereference the connection from the users list
-      connection.on('close', function () { _self.close(connection); });
+      connection.on('close', function () {
+        _self.close(connection);
+      });
     });
   };
 
-  this.respond = function(connection, request, users) {
+  this.respond = function (connection, request, users) {
     // let's make sure the request is not empty or not valid json
     if (request === null || !util.jsonTest(request)) {
       console.log(request + " from " + connection.remoteAddress + ":" + connection.remotePort);
@@ -260,7 +274,7 @@ function ChatServer(chat_port, chat_prefix) {
             };
 
             var conexion = destino.userconnection;
-            destino.available = false;    // this users i now occupied
+            destino.available = false; // this users i now occupied
             util.sendMessage(conexion, message);
           }
         } else {
@@ -289,7 +303,9 @@ function ChatServer(chat_port, chat_prefix) {
             };
           }
 
-          util.sendMessage(connection, { "event": "user ok" });
+          util.sendMessage(connection, {
+            "event": "user ok"
+          });
 
         } else {
           util.sendError(connection, 406, "malformated");
@@ -298,14 +314,21 @@ function ChatServer(chat_port, chat_prefix) {
 
       case 'get users':
         var number = data.number;
-        var users = util.getUsersFromNumber(number);
+        var userId = util.getUsersFromNumber(number);
+        var response_message = {};
 
-        var response_message = {
-          "event": "users_ready",
-          "data": {
-            "users_list": users
-          }
-        };
+        if (userId) {
+          response_message = {
+            "event": "user_ready",
+            "data": {
+              "userId": userId
+            }
+          };
+        } else {
+          response_message = {
+            "event": "no_users"
+          };
+        }
 
         util.sendMessage(response_message);
         break;
@@ -315,7 +338,7 @@ function ChatServer(chat_port, chat_prefix) {
         users[users].available = true;
 
         break;
-        
+
       default:
         util.sendError(connection, 400, "Server couldn't process request");
         break;
