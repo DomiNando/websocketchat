@@ -129,6 +129,17 @@ function ChatServer(chat_port, chat_prefix) {
       }
       today = mm + '/' + dd + '/' + yyyy;
       return "at " + dd + "/" + mm + "/" + yyyy + " " + hr + ":" + mins + ":" + secs;
+    },
+
+    setAvailable: function(nickname) {
+      for (var user in users) {
+        var current_user = users[user];
+
+        if (current_user.userName === nickname) {
+          current_user.available = true;
+          return true;
+        }
+      }
     }
   };
 
@@ -349,8 +360,12 @@ function ChatServer(chat_port, chat_prefix) {
         break;
 
       case 'set available':
-        user = data.nickname;
-        users[user].available = true;
+        /*user = data.nickname;
+        users[user].available = true;*/
+        var nickname = data.nickname;
+
+        util.setAvailable(nickname);
+
 
         break;
 
