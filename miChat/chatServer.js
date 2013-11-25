@@ -56,7 +56,7 @@ function ChatServer(chat_port, chat_prefix) {
 
     // method to return list of users based on their phone numbers
     getUsersFromNumber: function (number) {
-      var users_that_match = [];
+      // var users_that_match = [];
       /*for (var number in list_of_numbers) {
         for (var user in users) {
           var current_user = users[user];
@@ -317,9 +317,10 @@ function ChatServer(chat_port, chat_prefix) {
         break;
 
       case 'get users':
-        // NEW! THIS IS NEW! BECAUSE IT IS NEW!!!!
         var number = data.number;
+        console.log('[number request]', number);
         var user = util.getUsersFromNumber(number);
+        console.log('[user is]', user);
         var response_message = {};
 
         if (user) {

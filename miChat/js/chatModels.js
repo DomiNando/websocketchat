@@ -19,6 +19,8 @@ var ChatModel = Stapes.subclass({
     this.onOpen();
     this.onMessage();
     this.server.onclose = this.onClose();
+
+    this.available = true;
   },
 
     login: function(phoneNumber, userName) { //CAMBIE!!
@@ -30,7 +32,8 @@ var ChatModel = Stapes.subclass({
           'event': 'login',
           'data': {
             'phonenumber': this.phoneNumber,
-                'nickname': this.nickname  //CAMBIE!!
+            'nickname': this.nickname  //CAMBIE!!,
+            'available': this.available
               }
             };
 
@@ -79,6 +82,10 @@ var ChatModel = Stapes.subclass({
                         "nickname": this.nickname
                       }
                     });
+
+                    this.available = true;
+                  } else {
+                    this.available = false;
                   }
 
                   console.log('data', dt);                        
