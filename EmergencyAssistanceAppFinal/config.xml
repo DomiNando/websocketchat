@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.alpacatech.eaamockup" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Emergency Assistance</name>
+    <description> Mobile Version to Capstone Project of Alpaca Tech</description>
+    <author href="" email="jdl28110@gmail.com">Juan C. de León Díaz</author>
+
+    <access uri="http://eaa.ece.uprm.edu/" subdomains="true" origin="http://eaa.ece.uprm.edu/" />
+    <content src="index.html" />
+    <access origin="*"/>
+    <access uri="*" subdomains="true" origin="*" />
+    <access uri="http://websocketchat-c9-erreh.c9.io" subdomains="true" origin="http://websocketchat-c9-erreh.c9.io" />
+
+    <feature name="http://api.phonegap.com/1.0/network"/>
+    <feature name="http://api.phonegap.com/1.0/geolocation"/>
+
+    <preference name="fullscreen" value="true" />
+    <preference name="webviewbounce" value="true" />
+    <preference name="phonegap-version" value="3.1.0" />
+    <preference name="KeyboardShrinksView" value="true" />
+
+
+</widget>

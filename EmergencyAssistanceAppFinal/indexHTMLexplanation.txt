@@ -1,0 +1,169 @@
+index.html explanation:
+	1.) Line 4 links to the stylesheet used to manipulate the elements
+	in the html page.
+	
+	2.) Line 7: This div tag controls all the pages inside the id="app"
+	
+	3.) Line 9: The header (title) of the app on top of the screen
+	
+	4.) Line 11: This section tag with id="login" encapsulates the
+	input form used for the user to input his phonenumber and the checkbox
+	button used for the acceptance of the Terms of Service.
+	
+	5.) Line 12: This input tag with id="userPhoneNumber" includes
+	the placeholder text "Your Phone Number" inside the form so the
+	user know he/she has to input his/her phonenumber there. It is 
+	a form for the user to input text data.
+	
+	6.) Line 14: This input tag with id="termsAccepted" includes the
+	text "I agree to the terms and conditions", with a link to such
+	terms and conditions. They still have to be written. This input is
+	of checkbox type, which the user checks if he/she agrees with such
+	terms.
+	
+	7.) Line 16: This button tag includes text "Log In", so that the
+	user knows that that button logs him/her into the system. It's a
+	button type, so for any action to take place, it would have to be 
+	clicked by the user.
+	
+	8.) Line 18: This section tag with the id="mainPage" encapsulates
+	and constitutes the main page of our application, housing the Call
+	911, Call Police, Call Ambulance, Call Firefighters, and Other
+	Services buttons.
+	
+	9.) Line 19: This button tag with the id="call911" leads to the 911
+	call, which shall be implemented in the integration phase. It
+	should exit the application and call 911. It contains the text 
+	"Call 911" so that the user knows what the button will do when it
+	is clicked.
+	
+	10.) Line 20: This button tag with the id="police" includes the
+	text "Call Police", so that the user knows that the button will
+	cause the list of nearest police stations to be retrieved from the
+	database. It is a button, so the aforementioned action will only
+	trigger when the button is clicked. This action will be implemented
+	in the integration phase.
+	
+	11.) Line 21: This button tag with the id="ambulance" includes the
+	text "Call Ambulance", so that the user knows that the button
+	will cause the list of nearest ambulance stations to be retrieved
+	from the database. It is a button, so the aforementioned action
+	will only trigger when the button is clicked. This action will be
+	implemented in the integration phase.
+	
+	12.) Line 22: This button tag with the id="firefighters" includes
+	the text "Call Firefighters", so that the user knows that the
+	button will cause the list of nearest fire stations to be
+	retrieved from the database. It is a button, so the aforementioned
+	action will only trigger when the button is clicked. This action
+	will be implemented in the integration phase.
+	
+	13.) Line 23: This button tag with the id="other" includes the
+	text "Other Services", so that the user knows that the button leads
+	to the Other Services page. It is a button, so the aforementioned
+	action will only trigger when the button is clicked.
+	
+	14.) Line 25: This section tag with the id="call" encapsulates and
+	constitutes the Call Page of the application. This page is
+	triggered when the user clicks on either the Call Police, Call
+	Ambulance, Call Firefighters, or Call Towing Services button. It
+	houses the Hang Up and Call Next buttons.
+	
+	15.) Line 26: This button tag with the id="hangUp" includes the
+	text "Hang Up", so that the user knows that the button hangs up the
+	call. It should lead to the modal window prompting the user if he/
+	she wishes to send his/her coordinates to service inquired. The
+	modal window still has to be implemented. The Hang Up action will
+	be implemented in the integration phase. It is a button, so the
+	aforementioned action will only trigger when the button is clicked.
+		
+	16.) Line 27: This button tag with the id="callNext" includes the
+	text "Call Next", so that the user knows that the button ends the
+	current call, and calls the next service in the list brought from
+	the database. It is a button, so the aforementioned action will
+	only trigger when the button is clicked. The list mechanism has
+	already been implemented, but integration with the backend will be
+	implemented in the integration phase.
+	
+	17.) Line 29: This section tag with the id="otherServices"
+	encapsulates and constitutes the Other Services page of the
+	application. It houses the Chat, Hospitals, Call Towing Services,
+	and Back buttons. This page is first reached when the user clicks
+	on the Other Services button on the Main Page of the application.
+	
+	18.) Line 30: This button tag with the id="chatButton" includes the
+	text "Chat", so that the user knows that it will take him to the
+	Choose Chat page. It is a button, so the aforementioned action will
+	only trigger when the button is clicked.
+	
+	19.) Line 31: This button tag with the id="hospitalsButton"
+	includes the text "Hospitals", so that the user knows that it will
+	take him/her to a page showing a map with the nearest hospitals to
+	the user's location marked on. It is a
+	button, so the aforementioned action will only trigger when the
+	button is clicked.
+	
+	20.) Line 32: This button tag with the id="towingButton" includes
+	the text "Call Towing Services", so that the user knows that the
+	button will cause the list of nearest towing services to be
+	retrieved from the database. It is a button, so the aforementioned
+	action will only trigger when the button is clicked. This action
+	will be implemented in the integration phase.
+	
+	21.) Line 33: This button tag with the class="back" includes the
+	text "Back", so that the user knows that the button will cause him/
+	her to go back to the previous page. It is a button, so the 
+	aforementioned action will only trigger when the button is clicked.
+	
+	22.) Line 35: This section tag with the id="hospitals" encapsulates
+	and constitutes the Hospitals Page. This page will display a map
+	with the hospitals nearest to the user marked on the map. This page
+	also houses a Back button. The action linking marked maps to this
+	page will be implemented in the integration phase.
+	
+	23.) Line 39: See explanation 21.
+	
+	24.) Line 41: This section tag with the id="chat" encapsulates and
+	constitutes the Chat page, which houses the Chat Police, Chat
+	Firefighters, Chat Ambulance, and Back buttons. This page is first
+	reached when the user clicks the Chat button in the Other Services
+	Page.
+	
+	25.) Line 45: This button tag with the id="chatPolice" includes the
+	text "Chat Police", so that the user knows that the button will
+	retrieve a list of the police stations closest to the user's
+	location, and the user will be able to chat with them. The list
+	retrieval system will be implemented in the integration phase. It
+	is a button, so the aforementioned action will only trigger when
+	the button is clicked.
+	
+	26.) Line 46: This button tag with the id="chatFirefighters"
+	includes the text "Chat Police", so that the user knows that the 
+	button will retrieve a list of the fire stations closest to the
+	user's location, and the user will be able to chat with them. The
+	list retrieval system will be implemented in the integration phase.
+	It is a button, so the aforementioned action will only trigger
+	when the button is clicked.
+	
+	27.) Line 47: This button tag with the id="chatAmbulance" includes
+	the text "Chat Ambulance", so that the user knows that the button
+	will retrieve a list of the ambulance stations closest to the
+	user's location, and the user will be able to chat with them. The
+	list retrieval system will be implemented in the integration phase.
+	It is a button, so the aforementioned action will only trigger
+	when the button is clicked.
+	
+	28.) Line 48: See explanation 21.
+	
+	29.) Line 55: This section tag with the id="chatScreen"
+	encapsulates and constitutes the Chat Screen page, which houses the
+	conversation between the mobile client, and the web client. This
+	connection will be implemented before the second Happy Hour. The
+	chat basic functionality has already been implemented.
+	
+	30.) Line 59: This script tag of type text/javascript references
+	the JQuery library used in this code, so that it can be recognized.
+	
+	31.) Line 60: This script tag of type text/javascript references
+	the javascript code that this program runs, which is app.js in this
+	case.
