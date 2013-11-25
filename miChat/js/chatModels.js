@@ -1,7 +1,7 @@
 /*global SockJS, Stapes*/
 'use strict';
 
-var _db = window.localStorage;
+var _db = window.sessionStorage;
 
 var ChatModel = Stapes.subclass({
   setDestinationId: function (id) {
