@@ -56,7 +56,6 @@ function ChatServer(chat_port, chat_prefix) {
 
     // method to return list of users based on their phone numbers
     getUsersFromNumber: function (number) {
-      number = number.slice(1); // remove frist space from number!
       // var users_that_match = [];
       /*for (var number in list_of_numbers) {
         for (var user in users) {
