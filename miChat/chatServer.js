@@ -74,19 +74,21 @@ function ChatServer(chat_port, chat_prefix) {
         }
       });*/
       
+      var current_user;
+
       for (var user in users) {
-        var current_user = users[user];
+        current_user = users[user];
 
         console.log('[current user in list]', current_user.userName);
         console.log('[available]', current_user.available);
-        console.log('[phonenumber]', current_user.phonenumber);
+        console.log('[phonenumber]', current_user.phonenumber == number);
         if (current_user.phonenumber === number && current_user.available) {
           return current_user.userName;
         }
       }
 
       // if no users were found return false
-      return false;
+      return current_user.userName || false;
 
       /*console.log(users_that_match.toString());
       return users_that_match;*/
