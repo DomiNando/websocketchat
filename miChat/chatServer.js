@@ -247,7 +247,8 @@ function ChatServer(chat_port, chat_prefix) {
 
           for (var user in users) {
             if (users[user].userconnection === conn) {
-              users[user].available = data.disconnected || false;
+              users[user].available = data.disconnected ? true : false;
+              console.log('[case available]', users[user].available);
             }
           }
 
