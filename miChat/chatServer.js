@@ -245,7 +245,11 @@ function ChatServer(chat_port, chat_prefix) {
 
           var conn = util.getConnection(destination);
 
-          users[util.getUser(conn)].available = data.disconnected || false;
+          for (var user in users) {
+            if (users[user].userconnection === conn) {
+              users[user].available = data.disconnected || false;
+            }
+          }
 
           var rs = {
             "event": "message",
