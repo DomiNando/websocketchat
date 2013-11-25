@@ -83,7 +83,8 @@ function ChatServer(chat_port, chat_prefix) {
         console.log('[available]', current_user.available);
         console.log('[phonenumber]', current_user.phonenumber == number);
         if (current_user.phonenumber === number && current_user.available) {
-          return current_user.userName;
+          console.log('[breaking out]');
+          break;    // if we find a match let's break out of the loop
         }
       }
 
