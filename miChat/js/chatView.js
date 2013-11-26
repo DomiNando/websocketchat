@@ -9,7 +9,6 @@ var ChatView = Stapes.subclass({
 });
 
 ChatView.extend({
-console.log("Entro a chatView.extend!!");
     ENTER_KEY: 13,
     message_template: '{{#messages}}<li class="{{class}} message"><div class="view"><div><label class="username">{{username}}</label><span>{{message}}</span></div></div></li>{{/messages}}'
 });
