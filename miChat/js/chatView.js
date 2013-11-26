@@ -30,12 +30,10 @@ ChatView.proto({
             var message = $.trim($(e.target).val());
              $('#input input').css("background-color", "white");
 
-            if (e.which === ChatView.ENTER_KEY && message !== '' && message.length <= 160) {
+            if (e.which === ChatView.ENTER_KEY && message !== '') {
                 e.preventDefault();
                 this.emit('message-send', message);
                 this.clearInput();
-            } else if (message.length > 160) {
-                $('#input input').css("background-color", "red");
             }
         }.bind(this));
 
