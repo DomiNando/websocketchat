@@ -63,7 +63,7 @@ ChatView.proto({
 
     show: function() {
         $('#chat').show();
-        $('#content').show();
+        $('#content0').show();
         $('#input').show();
     },
 
@@ -72,7 +72,7 @@ ChatView.proto({
     },
 
     minimize: function() {
-        $('#chat #content').toggle();
+        $('#chat #content0').toggle();
         $('#chat #input').toggle();
     },
 
