@@ -9,13 +9,14 @@ var ChatView = Stapes.subclass({
 });
 
 ChatView.extend({
+console.log("Entro a chatView.extend!!");
     ENTER_KEY: 13,
     message_template: '{{#messages}}<li class="{{class}} message"><div class="view"><div><label class="username">{{username}}</label><span>{{message}}</span></div></div></li>{{/messages}}'
 });
 
 ChatView.proto({
     bindEventHandlers: function() {
-
+ 	console.log("Entro a Event Handlers!");
         /*$('#submit').on('click',function(e) {
             var message = $('#input input').val();
 
@@ -27,6 +28,7 @@ ChatView.proto({
         }.bind(this)); */
 
         $('#input input').on('keyup', function(e) {
+        	console.log("Entro a keyup!!");
             var message = $.trim($(e.target).val());
              $('#input input').css("background-color", "white");
 
