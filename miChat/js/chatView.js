@@ -52,6 +52,7 @@ ChatView.proto({
     },
 
     loadTemplates: function() {
+    console.log("Entro a loadTemplates!");
         this.template = Handlebars.compile(ChatView.message_template);
     },
 
@@ -80,10 +81,12 @@ ChatView.proto({
     },
 
     'getState': function() {
+    console.log("Entro a getState!");
         return window.location.hash.replace('#/', '') || 'all';
     },
 
     'setActiveRoute': function(route) {
+    console.log("Entro a setActiveRoute");
         $('#filters a').removeClass('selected').filter('[href="#/' + route + '"]').addClass('selected');
     }
 });
