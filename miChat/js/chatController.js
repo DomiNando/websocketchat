@@ -39,6 +39,7 @@ var ChatController = Stapes.subclass({
 
       'close': function () {
         this.model.server.close();
+        this.store.clear();
       },
 
       'error': function (err) {
