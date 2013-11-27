@@ -87,7 +87,7 @@ var ChatController = Stapes.subclass({
     if (this.model.size() > 0) {
       this.view.show();
     } else {
-      this.view.hide();
+      this.view.hideChat();
     }
   },
 
