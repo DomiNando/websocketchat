@@ -15,16 +15,7 @@ ChatView.extend({
 
 ChatView.proto({
     bindEventHandlers: function() {
- 	console.log("Entro a Event Handlers!");
-        /*$('#submit').on('click',function(e) {
-            var message = $('#input input').val();
-
-            console.log('length is ' + message.length);
-            if (message.length <= 160 && message !== '') {
-                this.emit('message-send', message);
-                this.clearInput(); 
-            }
-        }.bind(this)); */
+        console.log("Entro a Event Handlers!");
 
         $('#input input').on('keyup', function(e) {
         	console.log("Entro a keyup!!");
@@ -43,7 +34,7 @@ ChatView.proto({
         }.bind(this));
 
         $('#close-chat').on('click', function() {
-            this.hide();
+            this.hideChat();
         }.bind(this));
 
         window.onhashchange = function() {
@@ -67,7 +58,7 @@ ChatView.proto({
         $('#input').show();
     },
 
-    hide: function() {
+    hideChat: function() {
         $('#chat-window').hide();
     },
 
