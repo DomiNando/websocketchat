@@ -1,5 +1,5 @@
 /*global jQuery, $, Handlebars, Stapes*/
-(function () {
+$(function () {
   'use strict';
 
   var ChatView = Stapes.subclass({
@@ -79,4 +79,4 @@
       return window.location.hash.replace('#/', '') || 'all';
     }
   });
-})();
+});

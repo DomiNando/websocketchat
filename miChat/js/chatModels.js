@@ -1,5 +1,5 @@
 /*global SockJS, Stapes*/
-(function () {
+$(function () {
   'use strict';
 
   var _db = window.sessionStorage;
@@ -187,4 +187,4 @@
       this.onMessage(response);
     }
   });
-})();
+});

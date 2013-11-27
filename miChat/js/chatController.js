@@ -1,5 +1,5 @@
 /*global ChatView, ChatModel, ChatStore, Stapes */
-(function () {
+$(function () {
   'use strict';
 
   // .bind shim for IE8
@@ -98,4 +98,4 @@
 
     }
   });
-})();
+});

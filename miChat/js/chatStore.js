@@ -1,4 +1,4 @@
-(function () {
+$(function () {
   /*global Stapes */
   'use strict';
 
@@ -26,4 +26,4 @@
       this._db.setItem('emergency-chat', JSON.stringify(data));
     }
   });
-})();
+});
