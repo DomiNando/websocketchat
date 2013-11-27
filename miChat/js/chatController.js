@@ -27,7 +27,6 @@ var ChatController  = Stapes.subclass({
 
         this.on({
             'change:state': function(state) {
-                this.view.setActiveRoute(state);
                 this.renderAll();
             }
         });
@@ -56,11 +55,10 @@ var ChatController  = Stapes.subclass({
 
             'open': function() { //CAMBIE!!!!
             	// this.model.login(this.phoneNumber, this.username); //cambie!!
-            	var _db = window.sessionStorage;
-            	var username = _db.getItem("username");
-            	var phonenumber = _db.getItem("agencyPhoneNumber");
+            	var sstore = window.sessionStorage;
+            	var username = sstore.getItem("username");
+            	var phonenumber = sstore.getItem("agencyPhoneNumber");
             	this.model.login(phonenumber, username);
-                //this.model.login(1234567890);
             },
 
             'new message': function() {

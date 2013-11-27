@@ -5,15 +5,7 @@ var _db = window.sessionStorage;
 _db.setItem('current_id', '');
 
 var ChatModel = Stapes.subclass({
-  setDestinationId: function (id) {
-    if (id) {
-      this.destinationId = id;
-      _db.setItem('current_id', id);
-    } else {
-      return this.destinationId || _db.getItem('current_id');
-    }
-  },
-
+  
   constructor: function (server, options, messages) {
     this.set(messages);
     this.server = new SockJS(server, null, options);
@@ -22,6 +14,15 @@ var ChatModel = Stapes.subclass({
     this.server.onclose = this.onClose();
 
     this.available = true;
+  },
+
+  setDestinationId: function (id) {
+    if (id) {
+      this.destinationId = id;
+      _db.setItem('current_id', id);
+    } else {
+      return this.destinationId || _db.getItem('current_id');
+    }
   },
 
   login: function (phoneNumber, userName) { //CAMBIE!!
