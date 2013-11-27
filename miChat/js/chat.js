@@ -4,7 +4,7 @@
 (function () {
   if(!$) {
   $ = jQuery || function(handler) {
-    document.onload = pageLoad(handler);
+    document.onload = function() { pageLoad(handler) };
   };
 
   var pageLoad = function (handler) {
