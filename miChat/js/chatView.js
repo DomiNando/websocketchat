@@ -19,7 +19,7 @@ ChatView.proto({
 
     $('#input input').on('keyup', function (e) {
       console.log("Entro a keyup!!");
-      var message = $.trim($(e.target).val());
+      var message = $.trim($(e.target).val().substr(0, 160));
       $('#input input').css("background-color", "white");
 
       if (e.which === ChatView.ENTER_KEY && message !== '') {
