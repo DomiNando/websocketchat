@@ -1,15 +1,19 @@
 /*global ChatController, $, jQuery*/
 
 // this is incase jQuery hasn't used thed $ or jQuery doesn't exist.
-if(!$) {
+(function () {
+  if(!$) {
   $ = jQuery || function(handler) {
-    document.onload = function () {
-      if (document.readyState === 'complete' && hanlder) {
-        handler();
-      }
-    }
+    document.onload = pageLoad(handler);
   };
+
+  var pageLoad = function (handler) {
+    if (document.readyState === 'complete' && hanlder) {
+      handler();
+    }
+  }
 }
+})();
 
 $(function() {
   'use strict';
