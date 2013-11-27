@@ -21,10 +21,19 @@ var ChatStore = Stapes.subclass({
       data.splice(0,1);
     }
 
-    this._db.setItem('emergency-chat', JSON.stringify(data));
+    this.set(data);
   },
 
   clear: function() {
-    this._db.setItem('emergency-chat', '');
+    this.set('{}');
+  },
+
+  set: function(data) {
+
+    if (typeof data !== 'string' || typeof data === 'object') {
+      data = JSON.stringify(data) || data.toString();
+    }
+
+    this._db.setItem('emergency-chat', data);
   }
 });
