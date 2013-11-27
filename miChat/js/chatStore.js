@@ -7,7 +7,6 @@ var ChatStore = Stapes.subclass({
       console.log("We can't save this in your browser!!");
       console.log('Probably IE.');
     }
-
     this._db = window.localStorage;
   },
 
