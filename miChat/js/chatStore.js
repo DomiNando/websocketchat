@@ -22,5 +22,9 @@ var ChatStore = Stapes.subclass({
     }
 
     this._db.setItem('emergency-chat', JSON.stringify(data));
+  },
+
+  clear: function() {
+    this._db.setItem('emergency-chat', '');
   }
 });
