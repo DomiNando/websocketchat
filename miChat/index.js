@@ -228,6 +228,7 @@ ChatServer.prototype.close = function (connection) {
     if (connection === userConnection) {
       console.log("[user deleted] ", this.users[user].id);
       this.user_timeouts[this.users[user].userName] = setTimeout(function () {
+        console.log('[user really deleted!]');
         delete _self.users[user];
       }, 10000);
 
