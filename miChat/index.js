@@ -77,7 +77,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
         console.log(responseMessage);
 
-        var conn = this.util.getConnection(destination);
+        var conn = this.util.getConnection(destination, this.users);
 
         
         for (var user in users) {
@@ -91,7 +91,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           "event": "message",
           "data": {
             "message": responseMessage,
-            "userName": this.util.getUser(connection)
+            "userName": this.util.getUser(connection, this.users)
             // "be_availabe": data.disconnected
           }
         };
@@ -128,7 +128,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
        this.util.sendMessage(connection, rspv);
 
         if (data.newChat) { // this is a special condition sent by a mobile
-          var name =this.util.getUser(connection);
+          var name =this.util.getUser(connection, this.users);
 
           console.log("[user connection] ", name);
           var message = {
@@ -180,7 +180,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
     case 'get users':
       var number = data.number;
       console.log('[number request]', number);
-      var user =this.util.getUsersFromNumber(number);
+      var user =this.util.getUsersFromNumber(number, this.users);
       console.log('[user is]', user);
       var response_message = {};
 
@@ -205,7 +205,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
      this.users[user].available = true;*/
       var nickname = data.nickname;
 
-     this.util.setAvailable(nickname);
+     this.util.setAvailable(nickname, this.users);
 
 
       break;

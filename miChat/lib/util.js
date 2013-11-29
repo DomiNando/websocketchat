@@ -21,7 +21,7 @@ exports.sendError = function (connection, code, message) {
   connection.write(JSON.stringify(mes));
 },
 
-exports.getConnection = function (destination) {
+exports.getConnection = function (destination, users) {
   for (var user in users) {
     if (users[user].id === destination) {
       return users[user].userconnection;
@@ -30,7 +30,7 @@ exports.getConnection = function (destination) {
 };
 
   // method to return list of users based on their phone numbers
-exports.getUsersFromNumber = function (number) {     
+exports.getUsersFromNumber = function (number, users) {     
   var current_user;
 
   for (var user in users) {
@@ -52,7 +52,7 @@ exports.sendMessage = function (connection, message) {
   connection.write(JSON.stringify(message));
 };
 
-exports.getUser = function (connection) {
+exports.getUser = function (connection, user) {
   for (var user in users) {
     if (users[user].userconnection == connection) {
       console.log("[returning user] ", users[user].userName);
@@ -81,7 +81,7 @@ exports.fullDate = function () {
   return "at " + dd + "/" + mm + "/" + yyyy + " " + hr + ":" + mins + ":" + secs;
 };
 
-exports.setAvailable = function(nickname) {
+exports.setAvailable = function(nickname, users) {
   for (var user in users) {
     var current_user = users[user];
 
