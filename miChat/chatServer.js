@@ -52,7 +52,7 @@ ChatServer.prototype.start = function () {
 
 ChatServer.prototype.respond = function (connection, request, users) {
   // let's make sure the request is not empty or not valid json
-  if (request === null || !util.jsonTest(request)) {
+  if (request === null || !this.util.jsonTest(request)) {
     console.log(request + " from " + connection.remoteAddress + ":" + connection.remotePort);
     this.util.sendError(connection, 400, "Server couldn't process request");
   } else {
