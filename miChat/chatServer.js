@@ -40,7 +40,7 @@ ChatServer.prototype.start = function () {
     console.log(connection.remoteAddress + ":" + connection.remotePort);
 
     connection.on('data', function (request) {
-      _self.respond(connection, request, users);
+      _self.respond(connection, request, _self.users);
     });
 
     // here we simply dereference the connection from the users list
