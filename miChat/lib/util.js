@@ -52,7 +52,7 @@ exports.sendMessage = function (connection, message) {
   connection.write(JSON.stringify(message));
 };
 
-exports.getUser = function (connection, user) {
+exports.getUser = function (connection, users) {
   for (var user in users) {
     if (users[user].userconnection == connection) {
       console.log("[returning user] ", users[user].userName);
