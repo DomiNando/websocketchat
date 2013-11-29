@@ -1,3 +1,4 @@
+/*global exports,  JSON */
 exports.jsonTest = function (text) { // function to test if a string converts to valid JSON.
   try {
     JSON.parse(text);
