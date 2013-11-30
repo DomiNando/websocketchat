@@ -271,12 +271,17 @@ ChatServer.prototype.respond = function (connection, request, users) {
     case "login":
       // check if this user was loged in before
       var user = data.nickname || data.phonenumber;
+
+      console.log('[now using connection with ip ] ' + 
+        connection.remoteAddress + 
+        ' [at port] ' + 
+        connection.remotePort);
       if (user) {
         if (this.users[user]) {
           console.log('[login user]');
           clearTimeout(_self.userTimeouts[user]);
           this.users[user].userconnection = connection;
-          this.users[user].available = true // data.available; // this is a boolean!
+          this.users[user].available = data.available; // this is a boolean!
         } else {
           // let's register this guy!
           console.log('[adding user]');
