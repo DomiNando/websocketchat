@@ -229,7 +229,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
     case "requestChat":
       var dest = data.destination;
       console.log("[to] ", dest);
-      if (users[dest] &&this.users[dest].userconnection === connection) {
+      if (this.users[dest] && this.users[dest].userconnection === connection) {
        this.sendError(connection, 406, "can't send message to yourself.");
         console.log("[self chat attempt]");
       } else if (users[dest]) {
