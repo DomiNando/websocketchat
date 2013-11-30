@@ -23,7 +23,7 @@ function ChatServer(chat_port, chat_prefix) {
   this.port_number = chat_port || process.env.PORT || 3500;
   this.prefix = chat_prefix || '/chat';
 
-  // utility
+  //ity
 }
 
 // This is the users 'list' object and the
@@ -31,8 +31,8 @@ function ChatServer(chat_port, chat_prefix) {
 ChatServer.prototype.users = {};
 ChatServer.prototype.userTimeouts = [];
 
-// Utilites
-ChatServer.prototype.util = {
+//ites
+ChatServer.prototype = {
   // function to test if a string converts to valid JSON.
   jsonTest: function (text) { 
     try {
@@ -163,13 +163,13 @@ ChatServer.prototype.start = function () {
 // and the server.
 ChatServer.prototype.respond = function (connection, request, users) {
   // let's make sure the request is not empty or not valid json
-  if (request === null || !this.util.jsonTest(request)) {
+  if (request === null || !this.jsonTest(request)) {
 
     console.log(request + " from " 
       + connection.remoteAddress 
       + ":" + connection.remotePort);
 
-    this.util.sendError(connection, 400, "Server couldn't process request");
+    this.sendError(connection, 400, "Server couldn't process request");
 
   } else {
 
@@ -184,7 +184,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
     case "message":
       if (data) {
-        var fullDate = this.util.fullDate();
+        var fullDate = this.fullDate();
 
         // If the boolean data.disconnected is true, then set the response message to
         // 'has disconnected', to let the other user know that 
@@ -194,7 +194,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
         console.log(responseMessage);
 
-        var conn = this.util.getConnection(destination);
+        var conn = this.getConnection(destination);
 
         
         for (var user in users) {
@@ -208,7 +208,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           "event": "message",
           "data": {
             "message": responseMessage,
-            "userName": this.util.getUser(connection)
+            "userName": this.getUser(connection)
             // "be_availabe": data.disconnected
           }
         };
@@ -216,11 +216,11 @@ ChatServer.prototype.respond = function (connection, request, users) {
         if (conn) { // if there is a connection, send the response.
           conn.write(JSON.stringify(rs));
         } else {
-         this.util.sendError(connection, 406, "Found no destination to send");
+         this.sendError(connection, 406, "Found no destination to send");
         }
 
       } else {
-       this.util.sendError(connection, 406, "Found no message to send");
+       this.sendError(connection, 406, "Found no message to send");
       }
       break;
 
@@ -228,7 +228,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
       var dest = data.destination;
       console.log("[to] ", dest);
       if (users[dest] &&this.users[dest].userconnection === connection) {
-       this.util.sendError(connection, 406, "can't send message to yourself.");
+       this.sendError(connection, 406, "can't send message to yourself.");
         console.log("[self chat attempt]");
       } else if (users[dest]) {
 
@@ -242,10 +242,10 @@ ChatServer.prototype.respond = function (connection, request, users) {
           }
         };
 
-       this.util.sendMessage(connection, rspv);
+       this.sendMessage(connection, rspv);
 
         if (data.newChat) { // this is a special condition sent by a mobile
-          var name = this.util.getUser(connection);
+          var name = this.getUser(connection);
 
           console.log("[user connection] ", name);
           var message = {
@@ -257,10 +257,10 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
           var conexion = destino.userconnection;
           destino.available = false; // this users i now occupied
-         this.util.sendMessage(conexion, message);
+         this.sendMessage(conexion, message);
         }
       } else {
-       this.util.sendError(connection, 400, "Server couldn't process request");
+       this.sendError(connection, 400, "Server couldn't process request");
       }
       break;
 
@@ -285,19 +285,19 @@ ChatServer.prototype.respond = function (connection, request, users) {
           };
         }
 
-       this.util.sendMessage(connection, {
+       this.sendMessage(connection, {
           "event": "user ok"
         });
 
       } else {
-       this.util.sendError(connection, 406, "malformated");
+       this.sendError(connection, 406, "malformated");
       }
       break;
 
     case 'get users':
         var number = data.number;
         console.log('[number request]', number);
-        var user = this.util.getUsersFromNumber(number);
+        var user = this.getUsersFromNumber(number);
         console.log('[user is]', user);
         var response_message = {};
 
@@ -316,7 +316,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           }
         }, 3 * 1000);
 
-        this.util.sendMessage(connection, response_message);
+        this.sendMessage(connection, response_message);
       break;
 
     case 'set available':
@@ -324,13 +324,13 @@ ChatServer.prototype.respond = function (connection, request, users) {
      this.users[user].available = true;*/
       var nickname = data.nickname;
 
-     this.util.setAvailable(nickname);
+     this.setAvailable(nickname);
 
 
       break;
 
     default:
-     this.util.sendError(connection, 400, "Server couldn't process request");
+     this.sendError(connection, 400, "Server couldn't process request");
       break;
     
     }
@@ -347,7 +347,7 @@ ChatServer.prototype.close = function (connection) {
   // I think there might be a method to find an object within
   // another object. Without using for each loops.
   for (var user in this.users) {
-    console.log("current user is: ",this.users[user].id);
+    console.log("current user is: ", this.users[user].id);
     var userConnection = this.users[user].userconnection;
 
     if (connection === userConnection) {
