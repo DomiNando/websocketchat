@@ -22,7 +22,7 @@ function ChatServer(chat_port, chat_prefix) {
   // user timeouts array.
   this.users = {};
   this.userTimeouts = [];
-  
+
   // setup the server
   this.chat_server = sockjs.createServer(sockjs_opts);
   this.port_number = chat_port || process.env.PORT || 3500;
@@ -315,9 +315,9 @@ ChatServer.prototype.respond = function (connection, request, users) {
               "event": "no_users"
             };
           }
-        }, 3 * 1000);
 
-        this.sendMessage(connection, response_message);
+          this.sendMessage(connection, response_message);
+        }, 3000);
       break;
 
     case 'set available':
