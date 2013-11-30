@@ -1,5 +1,4 @@
-/*global require, console */
-
+/*global require, console,  process, __dirname, module, exports */
 // Include libraries need to run the chat server.
 var express = require('express');
 var chat_http = require('http');
@@ -8,7 +7,9 @@ var sockjs = require("sockjs");
 var http_server = chat_http.createServer(main_server);
 
 // This is a configuration variable.
-var sockjs_opts = {  sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js" };
+var sockjs_opts = {
+  sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js"
+};
 
 // This is the constructor for the ChatServer class.
 // Notice constructors start with upper-case letters; methods
@@ -34,7 +35,7 @@ function ChatServer(chat_port, chat_prefix) {
 //ites
 ChatServer.prototype = {
   // function to test if a string converts to valid JSON.
-  jsonTest: function (text) { 
+  jsonTest: function (text) {
     try {
       JSON.parse(text);
     } catch (error) {
@@ -48,30 +49,30 @@ ChatServer.prototype = {
     var mes = {
       "event": "error",
       "data": {
-        "errorCode": code, 
+        "errorCode": code,
         "errMessage": message
       }
     };
     connection.write(JSON.stringify(mes));
   },
 
-  getConnection : function (destination) {
+  getConnection: function (destination) {
     for (var user in this.users) {
       if (this.users[user].id === destination) {
         return this.users[user].userconnection;
       }
     }
-  }, 
+  },
 
-    // method to return list of users based on their phone numbers
-  getUsersFromNumber : function (number) {     
+  // method to return list of users based on their phone numbers
+  getUsersFromNumber: function (number) {
     var current_user;
 
     for (var user in this.users) {
       current_user = this.users[user];
 
       if (current_user.phonenumber === number && current_user.available) {
-        return current_user.userName;    // if we find a match let's return it
+        return current_user.userName; // if we find a match let's return it
       }
     }
 
@@ -82,12 +83,12 @@ ChatServer.prototype = {
     return users_that_match;*/
   },
 
-  sendMessage : function (connection, message) {
+  sendMessage: function (connection, message) {
     var message = JSON.stringify(message);
     connection.write(message);
   },
 
-  getUser : function (connection) {
+  getUser: function (connection) {
     for (var user in this.users) {
       if (this.users[user].userconnection == connection) {
         console.log("[returning user] ", this.users[user].userName);
@@ -98,7 +99,7 @@ ChatServer.prototype = {
     return false;
   },
 
-  fullDate : function () {
+  fullDate: function () {
     var today = new Date();
     var dd = today.getDate();
     var mm = today.getMonth() + 1;
@@ -116,7 +117,7 @@ ChatServer.prototype = {
     return "at " + dd + "/" + mm + "/" + yyyy + " " + hr + ":" + mins + ":" + secs;
   },
 
-  setAvailable : function(nickname, users) {
+  setAvailable: function (nickname, users) {
     for (var user in this.users) {
       var current_user = this.users[user];
 
@@ -126,7 +127,7 @@ ChatServer.prototype = {
       }
     }
   }
-}; 
+};
 
 // Method to start the server. Must always be called or else
 // nothing runs, ever!
@@ -167,9 +168,10 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
   if (request === null || !this.jsonTest(request)) {
 
-    console.log(request + " from " 
-      + connection.remoteAddress 
-      + ":" + connection.remotePort);
+    console.log(request + " from " +
+      connection.remoteAddress +
+      ":" +
+      connection.remotePort);
 
     this.sendError(connection, 400, "Server couldn't process request");
 
@@ -198,11 +200,11 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
         var conn = this.getConnection(destination);
 
-        
+
         for (var user in users) {
           if (users[user].id === destination) {
             console.log(users[user]);
-           this.users[user].available = data.disconnected || false;
+            this.users[user].available = data.disconnected || false;
           }
         }
 
@@ -218,11 +220,11 @@ ChatServer.prototype.respond = function (connection, request, users) {
         if (conn) { // if there is a connection, send the response.
           conn.write(JSON.stringify(rs));
         } else {
-         this.sendError(connection, 406, "Found no destination to send");
+          this.sendError(connection, 406, "Found no destination to send");
         }
 
       } else {
-       this.sendError(connection, 406, "Found no message to send");
+        this.sendError(connection, 406, "Found no message to send");
       }
       break;
 
@@ -230,7 +232,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
       var dest = data.destination;
       console.log("[to] ", dest);
       if (this.users[dest] && this.users[dest].userconnection === connection) {
-       this.sendError(connection, 406, "can't send message to yourself.");
+        this.sendError(connection, 406, "can't send message to yourself.");
         console.log("[self chat attempt]");
       } else if (this.users[dest]) {
 
@@ -244,7 +246,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           }
         };
 
-       this.sendMessage(connection, rspv);
+        this.sendMessage(connection, rspv);
 
         if (data.newChat) { // this is a special condition sent by a mobile
           var name = this.getUser(connection);
@@ -259,10 +261,10 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
           var conexion = destino.userconnection;
           destino.available = false; // this users i now occupied
-         this.sendMessage(conexion, message);
+          this.sendMessage(conexion, message);
         }
       } else {
-       this.sendError(connection, 400, "Server couldn't process request");
+        this.sendError(connection, 400, "Server couldn't process request");
       }
       break;
 
@@ -270,55 +272,65 @@ ChatServer.prototype.respond = function (connection, request, users) {
       // check if this user was loged in before
       var user = data.nickname || data.phonenumber;
       if (user) {
-        if (this.users[user]) {
-          console.log('[login user]');
-          clearTimeout(_self.userTimeouts[user]);
-         this.users[user].userconnection = connection;
-         this.users[user].available = data.available; // this is a boolean!
-        } else {
-          // let's register this guy!
-          console.log('[adding user]');
-         this.users[user] = {
-            userconnection: connection,
-            id: user + "" + connection.remotePort,
-            userName: user, // This might be causing problems.
-            phonenumber: data.phonenumber,
-            available: true
-          };
-        }
+        // if (this.users[user]) {
+        //   console.log('[login user]');
+        //   clearTimeout(_self.userTimeouts[user]);
+        //   this.users[user].userconnection = connection;
+        //   this.users[user].available = data.available; // this is a boolean!
+        // } else {
+        //   // let's register this guy!
+        //   console.log('[adding user]');
+        //   this.users[user] = {
+        //     userconnection: connection,
+        //     id: user + "" + connection.remotePort,
+        //     userName: user, // This might be causing problems.
+        //     phonenumber: data.phonenumber,
+        //     available: true
+        //   };
+        // }
+         
+        console.log('[adding/login]')
+        this.users[user] = {
+          userconnection: connection,
+          id: user + "" + connection.remotePort,
+          userName: user,
+          phoneNumber: data.phonenumber,
+          available: data.available || true
+        };
 
-       this.sendMessage(connection, {
+
+        this.sendMessage(connection, {
           "event": "user ok"
         });
 
       } else {
-       this.sendError(connection, 406, "malformated");
+        this.sendError(connection, 406, "malformated");
       }
       break;
 
     case 'get users':
-        var number = data.number;
-        console.log('[number request]', number);
-        var user = this.getUsersFromNumber(number);
-        console.log('[user is]', user);
-        var response_message = {};
+      var number = data.number;
+      console.log('[number request]', number);
+      var user = this.getUsersFromNumber(number);
+      console.log('[user is]', user);
+      var response_message = {};
 
-        setTimeout(function () { 
-          if (user) {
-            response_message = {
-              "event": "user_ready",
-              "data": {
-                "user": user
-              }
-            };
-          } else {
-            response_message = {
-              "event": "no_users"
-            };
-          }
+      setTimeout(function () {
+        if (user) {
+          response_message = {
+            "event": "user_ready",
+            "data": {
+              "user": user
+            }
+          };
+        } else {
+          response_message = {
+            "event": "no_users"
+          };
+        }
 
-          _self.sendMessage(connection, response_message);
-        }, 3000);
+        _self.sendMessage(connection, response_message);
+      }, 3000);
       break;
 
     case 'set available':
@@ -326,15 +338,15 @@ ChatServer.prototype.respond = function (connection, request, users) {
      this.users[user].available = true;*/
       var nickname = data.nickname;
 
-     this.setAvailable(nickname);
+      this.setAvailable(nickname);
 
 
       break;
 
     default:
-     this.sendError(connection, 400, "Server couldn't process request");
+      this.sendError(connection, 400, "Server couldn't process request");
       break;
-    
+
     }
   }
 };
@@ -343,7 +355,7 @@ ChatServer.prototype.close = function (connection) {
   var _self = this;
   console.log("[closed connection] ", connection.remoteAddress + ":" + connection.remotePort);
   // console.log("users", users); // uncomment for debuging
-  
+
   // we need to find a way to eliminates this for loop.
   // It might be taking too much time!
   // I think there might be a method to find an object within
