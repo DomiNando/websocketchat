@@ -163,6 +163,7 @@ ChatServer.prototype.start = function () {
 // and the server.
 ChatServer.prototype.respond = function (connection, request, users) {
   // let's make sure the request is not empty or not valid json
+  var _self = this;
   if (request === null || !this.jsonTest(request)) {
 
     console.log(request + " from " 
@@ -268,9 +269,9 @@ ChatServer.prototype.respond = function (connection, request, users) {
       // check if this user was loged in before
       var user = data.nickname || data.phonenumber;
       if (user) {
-        if (this.users[user]) {
+        if (_self.users[user]) {
           console.log('[login user]');
-          clearTimeout(this.userTimeouts[this.user]);
+          clearTimeout(_self.userTimeouts[user]);
          this.users[user].userconnection = connection;
          this.users[user].available = data.available; // this is a boolean!
         } else {
