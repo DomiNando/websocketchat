@@ -209,9 +209,9 @@ ChatServer.prototype.respond = function (connection, request, users) {
         // }
         
         Object.keys(this.users).forEach(function(user, user_index, users) {
-          if (this.users[user_index].id === destination) {
-            console.log(this.users[user_index]);
-            this.users[user_index].available = data.disconnected || false;
+          if (this.users[user].id === destination) {
+            console.log(this.users[user]);
+            this.users[user].available = data.disconnected || false;
           }
         });
 
