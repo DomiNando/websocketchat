@@ -164,6 +164,7 @@ ChatServer.prototype.start = function () {
 ChatServer.prototype.respond = function (connection, request, users) {
   // let's make sure the request is not empty or not valid json
   var _self = this;
+
   if (request === null || !this.jsonTest(request)) {
 
     console.log(request + " from " 
@@ -316,7 +317,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
             };
           }
 
-          this.sendMessage(connection, response_message);
+          _self.sendMessage(connection, response_message);
         }, 3000);
       break;
 
