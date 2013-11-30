@@ -213,7 +213,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           "data": {
             "message": responseMessage,
             "userName": this.getUser(connection)
-            // "be_availabe": data.disconnected
+            "be_availabe": data.disconnected
           }
         };
 
