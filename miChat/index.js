@@ -289,14 +289,14 @@ ChatServer.prototype.respond = function (connection, request, users) {
           };
         }
          
-        console.log('[adding/login]')
-        this.users[user] = {
-          userconnection: connection,
-          id: user + "" + connection.remotePort,
-          userName: user,
-          phoneNumber: data.phonenumber,
-          available: data.available || true
-        };
+        // console.log('[adding/login]')
+        // this.users[user] = {
+        //   userconnection: connection,
+        //   id: user + "" + connection.remotePort,
+        //   userName: user,
+        //   phoneNumber: data.phonenumber,
+        //   available: data.available || true
+        // };
 
 
         this.sendMessage(connection, {
