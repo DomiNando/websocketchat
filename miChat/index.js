@@ -232,7 +232,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
       if (this.users[dest] && this.users[dest].userconnection === connection) {
        this.sendError(connection, 406, "can't send message to yourself.");
         console.log("[self chat attempt]");
-      } else if (users[dest]) {
+      } else if (this.users[dest]) {
 
         var destino = this.users[dest];
 
