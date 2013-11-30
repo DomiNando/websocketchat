@@ -82,8 +82,9 @@ ChatServer.prototype.util = {
     return users_that_match;*/
   },
 
-  sendMessage : function (connection) {
-    connection.write(JSON.stringify(message));
+  sendMessage : function (connection, message) {
+    var message = JSON.stringify(message);
+    connection.write(message);
   },
 
   getUser : function (connection) {
