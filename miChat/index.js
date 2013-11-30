@@ -203,7 +203,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
         for (var user in this.users) {
           if (this.users[user].id === destination) {
-            console.log(users[user]);
+            console.log(this.users[user]);
             this.users[user].available = data.disconnected || false;
           }
         }
