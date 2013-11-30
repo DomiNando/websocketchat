@@ -1,26 +1,134 @@
 /*global require, console */
+
+// Include libraries need to run the chat server.
 var express = require('express');
 var chat_http = require('http');
 var main_server = express();
 var sockjs = require("sockjs");
 var http_server = chat_http.createServer(main_server);
+
+// This is a configuration variable.
 var sockjs_opts = {  sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js" };
 
+// This is the constructor for the ChatServer class.
+// Notice constructors start with upper-case letters; methods
+// start with lower-case.
 function ChatServer(chat_port, chat_prefix) {
+  // we're in strict mode here. If this fails, everything
+  // fails.
   'use strict';
+
   // setup the server
   this.chat_server = sockjs.createServer(sockjs_opts);
   this.port_number = chat_port || process.env.PORT || 3500;
   this.prefix = chat_prefix || '/chat';
 
-  // users
-  this.users = {};
-  this.user_timeouts = [];
-
   // utility
-  this.util = require('./lib/util');
 }
 
+// This is the users 'list' object and the
+// user timeouts array.
+ChatServer.prototype.users = {};
+ChatServer.prototype.userTimeouts = [];
+
+// Utilites
+ChatServer.prototype.util = {
+  // function to test if a string converts to valid JSON.
+  jsonTest: function (text) { 
+    try {
+      JSON.parse(text);
+    } catch (error) {
+      return false;
+    }
+
+    return true;
+  },
+
+  sendError: function (connection, code, message) {
+    var mes = {
+      "event": "error",
+      "data": {
+        "errorCode": code, 
+        "errMessage": message
+      }
+    };
+    connection.write(JSON.stringify(mes));
+  },
+
+  getConnection : function (destination) {
+    for (var user in this.users) {
+      if (this.users[user].id === destination) {
+        return this.users[user].userconnection;
+      }
+    }
+  }, 
+
+    // method to return list of users based on their phone numbers
+  getUsersFromNumber : function (number) {     
+    var current_user;
+
+    for (var user in this.users) {
+      current_user = this.users[user];
+
+      if (current_user.phonenumber === number && current_user.available) {
+        return current_user.userName;    // if we find a match let's return it
+      }
+    }
+
+    // if no users were found return false
+    return false;
+
+    /*console.log(users_that_match.toString());
+    return users_that_match;*/
+  },
+
+  sendMessage : function (connection) {
+    connection.write(JSON.stringify(message));
+  },
+
+  getUser : function (connection) {
+    for (var user in this.users) {
+      if (this.users[user].userconnection == connection) {
+        console.log("[returning user] ", this.users[user].userName);
+        return this.users[user].userName;
+      }
+    }
+
+    return false;
+  },
+
+  fullDate : function () {
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1;
+    var yyyy = today.getFullYear();
+    var hr = today.getHours();
+    var mins = today.getMinutes();
+    var secs = today.getSeconds();
+    if (dd < 10) {
+      dd = '0' + dd;
+    }
+    if (mm < 10) {
+      mm = '0' + mm;
+    }
+    today = mm + '/' + dd + '/' + yyyy;
+    return "at " + dd + "/" + mm + "/" + yyyy + " " + hr + ":" + mins + ":" + secs;
+  },
+
+  setAvailable : function(nickname, users) {
+    for (var user in this.users) {
+      var current_user = this.users[user];
+
+      if (current_user.userName === nickname) {
+        current_user.available = true;
+        return true;
+      }
+    }
+  }
+}; 
+
+// Method to start the server. Must always be called or else
+// nothing runs, ever!
 ChatServer.prototype.start = function () {
   // start servers
   var _self = this;
@@ -40,7 +148,7 @@ ChatServer.prototype.start = function () {
     console.log(connection.remoteAddress + ":" + connection.remotePort);
 
     connection.on('data', function (request) {
-      _self.respond(connection, request, _self.users);
+      _self.respond(connection, request);
     });
 
     // here we simply dereference the connection from the users list
@@ -50,12 +158,20 @@ ChatServer.prototype.start = function () {
   });
 };
 
+// Method that handles message handleing, between the client
+// and the server.
 ChatServer.prototype.respond = function (connection, request, users) {
   // let's make sure the request is not empty or not valid json
   if (request === null || !this.util.jsonTest(request)) {
-    console.log(request + " from " + connection.remoteAddress + ":" + connection.remotePort);
+
+    console.log(request + " from " 
+      + connection.remoteAddress 
+      + ":" + connection.remotePort);
+
     this.util.sendError(connection, 400, "Server couldn't process request");
+
   } else {
+
     // now that we know the request is valid json, let's parse it
     // and react to the events
     var e = JSON.parse(request);
@@ -67,7 +183,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
     case "message":
       if (data) {
-        var fullDate =this.util.fullDate();
+        var fullDate = this.util.fullDate();
 
         // If the boolean data.disconnected is true, then set the response message to
         // 'has disconnected', to let the other user know that 
@@ -77,7 +193,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
         console.log(responseMessage);
 
-        var conn = this.util.getConnection(destination, this.users);
+        var conn = this.util.getConnection(destination);
 
         
         for (var user in users) {
@@ -91,7 +207,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           "event": "message",
           "data": {
             "message": responseMessage,
-            "userName": this.util.getUser(connection, this.users)
+            "userName": this.util.getUser(connection)
             // "be_availabe": data.disconnected
           }
         };
@@ -115,7 +231,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
         console.log("[self chat attempt]");
       } else if (users[dest]) {
 
-        var destino =this.users[dest];
+        var destino = this.users[dest];
 
         console.log("[connecting to] ", destino);
         var rspv = {
@@ -128,7 +244,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
        this.util.sendMessage(connection, rspv);
 
         if (data.newChat) { // this is a special condition sent by a mobile
-          var name =this.util.getUser(connection, this.users);
+          var name = this.util.getUser(connection);
 
           console.log("[user connection] ", name);
           var message = {
@@ -153,7 +269,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
       if (user) {
         if (users[user]) {
           console.log('[login user]');
-          clearTimeout(this.user_timeouts[this.user]);
+          clearTimeout(this.userTimeouts[this.user]);
          this.users[user].userconnection = connection;
          this.users[user].available = data.available; // this is a boolean!
         } else {
@@ -180,7 +296,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
     case 'get users':
       var number = data.number;
       console.log('[number request]', number);
-      var user =this.util.getUsersFromNumber(number, this.users);
+      var user = this.util.getUsersFromNumber(number);
       console.log('[user is]', user);
       var response_message = {};
 
@@ -205,7 +321,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
      this.users[user].available = true;*/
       var nickname = data.nickname;
 
-     this.util.setAvailable(nickname, this.users);
+     this.util.setAvailable(nickname);
 
 
       break;
@@ -213,6 +329,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
     default:
      this.util.sendError(connection, 400, "Server couldn't process request");
       break;
+    
     }
   }
 };
@@ -221,13 +338,18 @@ ChatServer.prototype.close = function (connection) {
   var _self = this;
   console.log("[closed connection] ", connection.remoteAddress + ":" + connection.remotePort);
   // console.log("users", users); // uncomment for debuging
+  
+  // we need to find a way to eliminates this for loop.
+  // It might be taking too much time!
+  // I think there might be a method to find an object within
+  // another object. Without using for each loops.
   for (var user in this.users) {
     console.log("current user is: ",this.users[user].id);
     var userConnection = this.users[user].userconnection;
 
     if (connection === userConnection) {
       console.log("[user deleted] ", this.users[user].id);
-      this.user_timeouts[this.users[user].userName] = setTimeout(function () {
+      this.userTimeouts[this.users[user].userName] = setTimeout(function () {
         console.log('[user really deleted!]');
         delete _self.users[user];
       }, 10000);
