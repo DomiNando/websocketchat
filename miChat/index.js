@@ -201,8 +201,8 @@ ChatServer.prototype.respond = function (connection, request, users) {
         var conn = this.getConnection(destination);
 
 
-        for (var user in users) {
-          if (users[user].id === destination) {
+        for (var user in this.users) {
+          if (this.users[user].id === destination) {
             console.log(users[user]);
             this.users[user].available = data.disconnected || false;
           }
@@ -212,8 +212,8 @@ ChatServer.prototype.respond = function (connection, request, users) {
           "event": "message",
           "data": {
             "message": responseMessage,
-            "userName": this.getUser(connection),
-            "be_availabe": data.disconnected
+            "userName": this.getUser(connection) //,
+            // "be_availabe": data.disconnected
           }
         };
 
