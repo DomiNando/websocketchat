@@ -272,22 +272,22 @@ ChatServer.prototype.respond = function (connection, request, users) {
       // check if this user was loged in before
       var user = data.nickname || data.phonenumber;
       if (user) {
-        // if (this.users[user]) {
-        //   console.log('[login user]');
-        //   clearTimeout(_self.userTimeouts[user]);
-        //   this.users[user].userconnection = connection;
-        //   this.users[user].available = data.available; // this is a boolean!
-        // } else {
-        //   // let's register this guy!
-        //   console.log('[adding user]');
-        //   this.users[user] = {
-        //     userconnection: connection,
-        //     id: user + "" + connection.remotePort,
-        //     userName: user, // This might be causing problems.
-        //     phonenumber: data.phonenumber,
-        //     available: true
-        //   };
-        // }
+        if (this.users[user]) {
+          console.log('[login user]');
+          clearTimeout(_self.userTimeouts[user]);
+          this.users[user].userconnection = connection;
+          this.users[user].available = true // data.available; // this is a boolean!
+        } else {
+          // let's register this guy!
+          console.log('[adding user]');
+          this.users[user] = {
+            userconnection: connection,
+            id: user + "" + connection.remotePort,
+            userName: user, // This might be causing problems.
+            phonenumber: data.phonenumber,
+            available: true
+          };
+        }
          
         console.log('[adding/login]')
         this.users[user] = {
