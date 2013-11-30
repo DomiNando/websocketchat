@@ -18,6 +18,11 @@ function ChatServer(chat_port, chat_prefix) {
   // fails.
   'use strict';
 
+  // This is the users 'list' object and the
+  // user timeouts array.
+  this.users = {};
+  this.userTimeouts = [];
+  
   // setup the server
   this.chat_server = sockjs.createServer(sockjs_opts);
   this.port_number = chat_port || process.env.PORT || 3500;
@@ -25,11 +30,6 @@ function ChatServer(chat_port, chat_prefix) {
 
   //ity
 }
-
-// This is the users 'list' object and the
-// user timeouts array.
-ChatServer.prototype.users = {};
-ChatServer.prototype.userTimeouts = [];
 
 //ites
 ChatServer.prototype = {
@@ -269,7 +269,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
       // check if this user was loged in before
       var user = data.nickname || data.phonenumber;
       if (user) {
-        if (this.users[user] !== undefined) {
+        if (this.users[user]) {
           console.log('[login user]');
           clearTimeout(_self.userTimeouts[user]);
          this.users[user].userconnection = connection;
