@@ -295,26 +295,28 @@ ChatServer.prototype.respond = function (connection, request, users) {
       break;
 
     case 'get users':
-      var number = data.number;
-      console.log('[number request]', number);
-      var user = this.util.getUsersFromNumber(number);
-      console.log('[user is]', user);
-      var response_message = {};
+        var number = data.number;
+        console.log('[number request]', number);
+        var user = this.util.getUsersFromNumber(number);
+        console.log('[user is]', user);
+        var response_message = {};
 
-      if (user) {
-        response_message = {
-          "event": "user_ready",
-          "data": {
-            "user": user
+        setTimeout(function () { 
+          if (user) {
+            response_message = {
+              "event": "user_ready",
+              "data": {
+                "user": user
+              }
+            };
+          } else {
+            response_message = {
+              "event": "no_users"
+            };
           }
-        };
-      } else {
-        response_message = {
-          "event": "no_users"
-        };
-      }
+        }, 3 * 1000);
 
-     this.util.sendMessage(connection, response_message);
+        this.util.sendMessage(connection, response_message);
       break;
 
     case 'set available':
