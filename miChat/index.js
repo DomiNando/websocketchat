@@ -281,6 +281,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           console.log('[login user]');
           clearTimeout(_self.userTimeouts[user]);
           this.users[user].userconnection = connection;
+          console.log('[the connection object is]', this.users[user].userconnection.toString());
           this.users[user].available = data.available; // this is a boolean!
         } else {
           // let's register this guy!
