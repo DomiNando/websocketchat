@@ -4,8 +4,8 @@
 var _db = window.sessionStorage;
 // _db.setItem('current_id', ''); // problem!!! this is reseting the ide everytime we change the page!!!\
 
-if (_db.user_id === '' || _db.user_id === null || _db.user_id === undefined) {
-  _db.setItem('user_id', '');
+if (_db.current_id === '' || _db.current_id === null || _db.current_id === undefined) {
+  _db.setItem('current_id', '');
 }
 
 var ChatModel = Stapes.subclass({
