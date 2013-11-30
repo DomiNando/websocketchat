@@ -293,6 +293,8 @@ ChatServer.prototype.respond = function (connection, request, users) {
             phonenumber: data.phonenumber,
             available: true
           };
+
+          console.log('[the connection object is]', this.users[user].userconnection.toString());
         }
          
         // console.log('[adding/login]')
