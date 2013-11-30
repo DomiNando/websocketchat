@@ -89,14 +89,22 @@ ChatServer.prototype = {
   },
 
   getUser: function (connection) {
-    for (var user in this.users) {
-      if (this.users[user].userconnection == connection) {
-        console.log("[returning user] ", this.users[user].userName);
-        return this.users[user].userName;
-      }
-    }
+    var _self = this;
+    var u;
+    // for (var user in this.users) {
+    //   if (this.users[user].userconnection == connection) {
+    //     console.log("[returning user] ", this.users[user].userName);
+    //     return this.users[user].userName;
+    //   }
+    // }
 
-    return false;
+    Object.keys(this.users).forEach(function (user, userIndex, usersArray) {
+      if (_self.users[user].userconnection === connection) {
+        u = _self.users[user].userName;
+      }
+    });
+
+    return u || false;
   },
 
   fullDate: function () {
@@ -118,14 +126,26 @@ ChatServer.prototype = {
   },
 
   setAvailable: function (nickname) {
-    for (var user in this.users) {
-      var current_user = this.users[user];
+    var bool, _self = this;
+    // for (var user in this.users) {
+    //   var current_user = this.users[user];
 
-      if (current_user.userName === nickname) {
-        current_user.available = true;
-        return true;
+    //   if (current_user.userName === nickname) {
+    //     current_user.available = true;
+    //     return true;
+    //   }
+    // }
+    
+    Object.keys(this.users).forEach(function (user, userIndex, usersArray) {
+      if (_self.users[user].userName === nickname) {
+        _self.users[user].available = true;
+        bool = true;
+      } else {
+        bool =  false;
       }
-    }
+    });
+
+    return bool;
   }
 };
 
@@ -208,7 +228,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
         //   }
         // }
         
-        Object.keys(this.users).forEach(function(user, user_index, users) {
+        Object.keys(this.users).forEach(function(user, user_index, users_array) {        
           if (_self.users[user].id === destination) {
             console.log('[much user]', _self.users[user].id);
             _self.users[user].available = data.disconnected || false;
