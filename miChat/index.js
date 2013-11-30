@@ -268,7 +268,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
       // check if this user was loged in before
       var user = data.nickname || data.phonenumber;
       if (user) {
-        if (users[user]) {
+        if (this.users[user]) {
           console.log('[login user]');
           clearTimeout(this.userTimeouts[this.user]);
          this.users[user].userconnection = connection;
