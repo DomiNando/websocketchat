@@ -302,7 +302,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           var message = { 
             "event": "user_ready",
             "data": {
-              "user": user.userName;
+              "user": user.userName
             } 
           };
 
