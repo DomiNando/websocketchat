@@ -378,17 +378,17 @@ ChatServer.prototype.respond = function (connection, request, users) {
       // break;
 
       case 'set available':
-      /*user = data.nickname;
-      this.users[user].available = true;*/
-      var nickname;
+        /*user = data.nickname;
+        this.users[user].available = true;*/
+        var nickname;
 
-      Object.keys(this.users).forEach(function (value, index, array) {
-        if (this.users[value].id === data.destinationId) {
-          nickname = this.users[value].username;
-        }
-      });
+        Object.keys(this.users).forEach(function (value, index, array) {
+          if (_self.users[value].id === data.destinationId) {
+            nickname = this.users[value].username;
+          }
+        });
 
-      this.setAvailable(nickname);
+        this.setAvailable(nickname);
       
 
 
