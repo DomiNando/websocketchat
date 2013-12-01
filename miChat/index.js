@@ -78,9 +78,6 @@ ChatServer.prototype = {
 
     // if no users were found return false
     return false;
-
-    /*console.log(users_that_match.toString());
-    return users_that_match;*/
   },
 
   sendMessage: function (connection, message) {
@@ -308,6 +305,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           console.log('[login user]');
           clearTimeout(_self.userTimeouts[user]);
           this.users[user].userconnection = connection;
+          this.users[user].userconnection.disconnect_delay = 10000;
           console.log('[the connection object is]', this.users[user].userconnection.toString());
           this.users[user].available = data.available; // this is a boolean!
         } else {
@@ -320,6 +318,8 @@ ChatServer.prototype.respond = function (connection, request, users) {
             phonenumber: data.phonenumber,
             available: true
           };
+
+          this.users[user].userconnection.disconnect_delay = 10000;
 
           console.log('[the connection object is]', this.users[user].userconnection.toString());
         }
