@@ -120,8 +120,9 @@ ChatServer.prototype.isSomeoneAvailable = function(number) {
 ChatServer.prototype.getUserbyNumber = function(number) {
   var _self = this;
   var username;
-  return Object.keys(this.users).forEach(function (value, index, array1) {
-    if (_self.users[value].phonenumber === number) {
+  Object.keys(this.users).forEach(function (value, index, array1) {
+    if (_self.users[value].phonenumber === number && 
+        _self.users[value].available) {
       username = _self.users[value].username;
     }
   });
