@@ -321,7 +321,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           this.users[this.getUser(destinations)].available = false;
           this.sendMessage(connection, message);
         } else {
-          this.sendMessage(conenction, { "event": "no_users" });
+          this.sendMessage(connection, { "event": "no_users" });
         }
       } else {
         this.sendError(connection, 406, "[please input a number.]");
