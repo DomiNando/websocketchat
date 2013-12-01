@@ -217,14 +217,6 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
         var conn = this.getConnection(destination);
 
-
-        // for (var user in this.users) {
-        //   if (this.users[user].id === destination) {
-        //     console.log(this.users[user]);
-        //     this.users[user].available = data.disconnected || false;
-        //   }
-        // }
-        
         Object.keys(this.users).forEach(function(user, user_index, users_array) {        
           if (_self.users[user].id === destination) {
             console.log('[much user]', _self.users[user].id);
@@ -305,7 +297,6 @@ ChatServer.prototype.respond = function (connection, request, users) {
           console.log('[login user]');
           clearTimeout(_self.userTimeouts[user]);
           this.users[user].userconnection = connection;
-          this.users[user].userconnection.disconnect_delay = 10000;
           console.log('[the connection object is]', this.users[user].userconnection.toString());
           this.users[user].available = data.available; // this is a boolean!
         } else {
@@ -318,8 +309,6 @@ ChatServer.prototype.respond = function (connection, request, users) {
             phonenumber: data.phonenumber,
             available: true
           };
-
-          this.users[user].userconnection.disconnect_delay = 10000;
 
           console.log('[the connection object is]', this.users[user].userconnection.toString());
         }
@@ -371,7 +360,15 @@ ChatServer.prototype.respond = function (connection, request, users) {
     case 'set available':
       /*user = data.nickname;
      this.users[user].available = true;*/
-      var nickname = data.nickname;
+
+      // var nickname = data.nickname;
+      var nickname;
+
+      Object.keys(this.users).forEach(function(user, user_index, user_array) {
+        if (_self.users[user].id === data.destinationId) {
+          nickname = _self.users[user].userName;
+        }
+      });
 
       this.setAvailable(nickname);
 
