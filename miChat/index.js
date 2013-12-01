@@ -71,7 +71,7 @@ ChatServer.prototype = {
     for (var user in this.users) {
       current_user = this.users[user];
 
-      if (current_user.phonenumber === number && current_user.available) {
+      if (current_user.phonenumber === number && (current_user.available === true || current_user.available === undefined)) {
         return current_user.userName; // if we find a match let's return it
       }
     }
