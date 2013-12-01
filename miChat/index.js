@@ -384,7 +384,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
         Object.keys(this.users).forEach(function (value, index, array) {
           if (_self.users[value].id === data.destinationId) {
-            nickname = this.users[value].username;
+            nickname = _self.users[value].username;
           }
         });
 
