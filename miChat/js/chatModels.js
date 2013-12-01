@@ -73,7 +73,7 @@ var ChatModel = Stapes.subclass({
 
         case "message":
           var chatMessage = data.message;
-          var userName = data.userName;
+          var userName = data.username;
           var dt = {
             'message': chatMessage,
             'user': userName,
