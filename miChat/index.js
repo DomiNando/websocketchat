@@ -380,9 +380,15 @@ ChatServer.prototype.respond = function (connection, request, users) {
       case 'set available':
       /*user = data.nickname;
       this.users[user].available = true;*/
-      var nickname = data.nickname;
+      var nickname;
 
-      // this.setAvailable(nickname);
+      Object.keys(this.users).forEach(function (value, index, array) {
+        if (this.users[value].id === data.destinationId) {
+          nickname = this.users[value].username;
+        }
+      });
+
+      this.setAvailable(nickname);
       
 
 
