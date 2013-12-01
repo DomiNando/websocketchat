@@ -91,7 +91,7 @@ ChatServer.prototype.getConnection = function(destination) {
 //     current_user = this.users[user];
 
 //     if (current_user.phonenumber === number && current_user.available) {
-//       return current_user.userName; // if we find a match let's return it
+//       return current_user.username; // if we find a match let's return it
 //     }
 //   }
 
@@ -119,14 +119,14 @@ ChatServer.prototype.isSomeoneAvailable = function(number) {
 
 ChatServer.prototype.getUserbyNumber = function(number) {
   var _self = this;
-  var user;
-  return Object.keys(this.users).forEach(function(value, index, array1) {
+  var username;
+  return Object.keys(this.users).forEach(function (value, index, array1) {
     if (_self.users[value].phonenumber === number) {
-      user = _self.users[value].userName;
+      username = _self.users[value].username;
     }
   });
 
-  return user || false;
+  return username || false;
 };
 
 ChatServer.prototype.sendMessage = function(connection, message) {
@@ -137,8 +137,8 @@ ChatServer.prototype.sendMessage = function(connection, message) {
 ChatServer.prototype.getUser = function(connection) {
   for (var user in this.users) {
     if (this.users[user].userconnection == connection) {
-      console.log("[returning user] ", this.users[user].userName);
-      return this.users[user].userName;
+      console.log("[returning user] ", this.users[user].username);
+      return this.users[user].username;
     }
   }
 
@@ -149,7 +149,7 @@ ChatServer.prototype.setAvailable = function(nickname) {
   // for (var user in this.users) {
   //   var current_user = this.users[user];
 
-  //   if (current_user.userName === nickname) {
+  //   if (current_user.username === nickname) {
   //     current_user.available = true;
   //     return true;
   //   }
@@ -251,7 +251,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           "event": "message",
           "data": {
             "message": responseMessage,
-            "userName": this.getUser(connection)
+            "username": this.getUser(connection)
           }
         };
 
@@ -301,11 +301,12 @@ ChatServer.prototype.respond = function (connection, request, users) {
       
       if (data.number !== undefined) {
         if (this.isSomeoneAvailable(data.number)) {
-          var user = this.users[this.getUserbyNumber(data.number)];
+          var username = this.getUserbyNumber(data.number);
+          var user = this.users[username];
           var message = { 
             "event": "user_ready",
             "data": {
-              "user": user.userName
+              "user": username
             } 
           };
 
@@ -351,7 +352,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           this.users[user] = {
             userconnection: connection,
             id: user + "" + connection.remotePort,
-            userName: user, 
+            username: user, 
             phonenumber: data.phonenumber,
             available: true
           };
@@ -417,7 +418,7 @@ ChatServer.prototype.close = function (connection) {
 
     if (connection === userConnection) {
       console.log("[user deleted] ", this.users[user].id);
-      this.userTimeouts[this.users[user].userName] = setTimeout(function () {
+      this.userTimeouts[this.users[user].username] = setTimeout(function () {
         console.log('[user really deleted!]');
         delete _self.users[user];
       },30000);
