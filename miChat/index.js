@@ -311,7 +311,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
             } 
           };
 
-          var conx = user.userconnection;
+          var conx = this.users[username].userconnection;
           this.sendMessage(conx, {
             "event": "new chat",
             "data": {
@@ -415,9 +415,9 @@ ChatServer.prototype.close = function (connection) {
   // another object. Without using for each loops.
   for (var user in this.users) {
     console.log("current user is: ", this.users[user].id);
-    var userConnection = this.users[user].userconnection;
+    var userconnection = this.users[user].userconnection;
 
-    if (connection === userConnection) {
+    if (connection === userconnection) {
       console.log("[user deleted] ", this.users[user].id);
       this.userTimeouts[this.users[user].username] = setTimeout(function () {
         console.log('[user really deleted!]');
