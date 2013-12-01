@@ -319,7 +319,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
             }
           });
 
-          this.users[this.getUser(destinations)].available = false;
+          this.users[username].available = false;
           this.sendMessage(connection, message);
         } else {
           this.sendMessage(connection, { "event": "no_users" });
