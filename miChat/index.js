@@ -228,8 +228,9 @@ ChatServer.prototype.respond = function (connection, request, users) {
           "event": "message",
           "data": {
             "message": responseMessage,
-            "userName": this.getUser(connection),
-            "be_availabe": data.disconnected
+            "userName": this.getUser(connection)
+            // ,
+            // "be_availabe": data.disconnected
           }
         };
 
@@ -298,7 +299,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           clearTimeout(_self.userTimeouts[user]);
           this.users[user].userconnection = connection;
           console.log('[the connection object is]', this.users[user].userconnection.toString());
-          this.users[user].available = data.available; // this is a boolean!
+          // this.users[user].available = data.available; // this is a boolean!
         } else {
           // let's register this guy!
           console.log('[adding user]');

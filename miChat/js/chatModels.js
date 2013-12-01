@@ -37,7 +37,7 @@ var ChatModel = Stapes.subclass({
       'event': 'login',
       'data': {
         'phonenumber': this.phoneNumber,
-        'nickname': this.nickname, //CAMBIE!!,
+        'nickname': this.nickname, // CAMBIE!!,
         'available': this.available
       }
     };
