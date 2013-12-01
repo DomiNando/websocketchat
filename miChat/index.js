@@ -121,8 +121,7 @@ ChatServer.prototype.getUserbyNumber = function(number) {
   var _self = this;
   var username;
   Object.keys(this.users).forEach(function (value, index, array1) {
-    if (_self.users[value].phonenumber === number && 
-        _self.users[value].available) {
+    if (_self.users[value].phonenumber === number) {
       username = _self.users[value].username;
     }
   });
@@ -137,7 +136,7 @@ ChatServer.prototype.sendMessage = function(connection, message) {
 
 ChatServer.prototype.getUser = function(connection) {
   for (var user in this.users) {
-    if (this.users[user].userconnection == connection) {
+    if (this.users[user].userconnection === connection) {
       console.log("[returning user] ", this.users[user].username);
       return this.users[user].username;
     }
@@ -293,13 +292,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
       break;
 
       case "new chat":
-      // {
-      //   "new chat",
-      //   "data": {
-      //     "number": "1234567890"
-      //   }
-      // }
-      
+
       if (data.number !== undefined) {
         if (this.isSomeoneAvailable(data.number)) {
           var username = this.getUserbyNumber(data.number);
@@ -311,8 +304,8 @@ ChatServer.prototype.respond = function (connection, request, users) {
             } 
           };
 
-          var conx = this.users[username].userconnection;
-          this.sendMessage(conx, {
+          
+          this.sendMessage(this.users[username].userconnection, {
             "event": "new chat",
             "data": {
               "destination": this.getUser(connection)
