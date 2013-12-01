@@ -109,7 +109,7 @@ ChatServer.prototype.isSomeoneAvailable = function(number) {
   var _self = this;
   var bool;
   Object.keys(this.users).forEach(function (value, index, array1) {
-    if (_self.users[value].phonenumber === number) {
+    if (_self.users[value].phonenumber === number && _self.users[value].available) {
       bool = true;
     } 
   });
