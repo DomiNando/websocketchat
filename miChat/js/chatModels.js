@@ -82,12 +82,12 @@ var ChatModel = Stapes.subclass({
           };
 
           if (data.be_available) {
-            model.sendData({
-              "event": "set available",
-              "data": {
-                "nickname": this.nickname
-              }
-            });
+            // model.sendData({
+            //   "event": "set available",
+            //   "data": {
+            //     "nickname": this.nickname
+            //   }
+            // });
 
             this.available = true;
           } else {
