@@ -236,8 +236,8 @@ ChatServer.prototype.respond = function (connection, request, users) {
           "event": "message",
           "data": {
             "message": responseMessage,
-            "userName": this.getUser(connection),
-            "be_availabe": data.disconnected
+            "userName": this.getUser(connection)
+            //"be_availabe": data.disconnected
           }
         };
 
