@@ -310,7 +310,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           this.sendMessage(conx, {
             "event": "new chat",
             "data": {
-              "destination": this.getUser(connection);
+              "destination": this.getUser(connection)
             }
           });
 
