@@ -71,13 +71,16 @@ ChatServer.prototype = {
     for (var user in this.users) {
       current_user = this.users[user];
 
-      if (current_user.phonenumber === number && (current_user.available === true || current_user.available === undefined)) {
+      if (current_user.phonenumber === number && current_user.available) {
         return current_user.userName; // if we find a match let's return it
       }
     }
 
     // if no users were found return false
     return false;
+
+    /*console.log(users_that_match.toString());
+    return users_that_match;*/
   },
 
   sendMessage: function (connection, message) {
@@ -86,22 +89,14 @@ ChatServer.prototype = {
   },
 
   getUser: function (connection) {
-    var _self = this;
-    var u;
-    // for (var user in this.users) {
-    //   if (this.users[user].userconnection == connection) {
-    //     console.log("[returning user] ", this.users[user].userName);
-    //     return this.users[user].userName;
-    //   }
-    // }
-
-    Object.keys(this.users).forEach(function (user, userIndex, usersArray) {
-      if (_self.users[user].userconnection === connection) {
-        u = _self.users[user].userName;
+    for (var user in this.users) {
+      if (this.users[user].userconnection == connection) {
+        console.log("[returning user] ", this.users[user].userName);
+        return this.users[user].userName;
       }
-    });
+    }
 
-    return u || false;
+    return false;
   },
 
   fullDate: function () {
@@ -123,26 +118,14 @@ ChatServer.prototype = {
   },
 
   setAvailable: function (nickname) {
-    var bool, _self = this;
-    // for (var user in this.users) {
-    //   var current_user = this.users[user];
+    for (var user in this.users) {
+      var current_user = this.users[user];
 
-    //   if (current_user.userName === nickname) {
-    //     current_user.available = true;
-    //     return true;
-    //   }
-    // }
-    
-    Object.keys(this.users).forEach(function (user, userIndex, usersArray) {
-      if (_self.users[user].userName === nickname) {
-        _self.users[user].available = true;
-        bool = true;
-      } else {
-        bool =  false;
+      if (current_user.userName === nickname) {
+        current_user.available = true;
+        return true;
       }
-    });
-
-    return bool;
+    }
   }
 };
 
@@ -217,9 +200,17 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
         var conn = this.getConnection(destination);
 
-        Object.keys(this.users).forEach(function(user, user_index, users_array) {        
+
+        // for (var user in this.users) {
+        //   if (this.users[user].id === destination) {
+        //     console.log(this.users[user]);
+        //     this.users[user].available = data.disconnected || false;
+        //   }
+        // }
+        
+        Object.keys(this.users).forEach(function(user, user_index, users) {
           if (_self.users[user].id === destination) {
-            console.log('[much user]', _self.users[user].id);
+            console.log('[much user]', user.id);
             _self.users[user].available = data.disconnected || false;
           }
         });
@@ -228,9 +219,8 @@ ChatServer.prototype.respond = function (connection, request, users) {
           "event": "message",
           "data": {
             "message": responseMessage,
-            "userName": this.getUser(connection)
-            ,
-            "be_availabe": data.disconnected
+            "userName": this.getUser(connection) //,
+            // "be_availabe": data.disconnected
           }
         };
 
@@ -299,7 +289,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           clearTimeout(_self.userTimeouts[user]);
           this.users[user].userconnection = connection;
           console.log('[the connection object is]', this.users[user].userconnection.toString());
-          // this.users[user].available = data.available; // this is a boolean!
+          this.users[user].available = data.available; // this is a boolean!
         } else {
           // let's register this guy!
           console.log('[adding user]');
@@ -361,15 +351,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
     case 'set available':
       /*user = data.nickname;
      this.users[user].available = true;*/
-
-      // var nickname = data.nickname;
-      var nickname;
-
-      Object.keys(this.users).forEach(function(user, user_index, user_array) {
-        if (_self.users[user].id === data.destinationId) {
-          nickname = _self.users[user].userName;
-        }
-      });
+      var nickname = data.nickname;
 
       this.setAvailable(nickname);
 
