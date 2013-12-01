@@ -119,11 +119,14 @@ ChatServer.prototype.isSomeoneAvailable = function(number) {
 
 ChatServer.prototype.getUserbyNumber = function(number) {
   var _self = this;
-  return Object.keys(this.users).filter(function(value, index, array1) {
+  var user;
+  return Object.keys(this.users).forEach(function(value, index, array1) {
     if (_self.users[value].phonenumber === number) {
-      return _self.users[value];
+      user = _self.users[value].userName;
     }
-  })[0]; // This is ugly, but it works.
+  });
+
+  return user || false;
 };
 
 ChatServer.prototype.sendMessage = function(connection, message) {
@@ -298,7 +301,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
       
       if (data.number !== undefined) {
         if (this.isSomeoneAvailable(data.number)) {
-          var user = this.getUserbyNumber(data.number);
+          var user = this.users[this.getUserbyNumber(data.number)];
           var message = { 
             "event": "user_ready",
             "data": {
