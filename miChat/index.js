@@ -29,105 +29,142 @@ function ChatServer(chat_port, chat_prefix) {
   this.port_number = chat_port || process.env.PORT || 3500;
   this.prefix = chat_prefix || '/chat';
 
-  //ity
 }
 
-//ites
-ChatServer.prototype = {
-  // function to test if a string converts to valid JSON.
-  jsonTest: function (text) {
-    try {
-      JSON.parse(text);
-    } catch (error) {
-      return false;
-    }
+// Utilites
 
-    return true;
-  },
-
-  sendError: function (connection, code, message) {
-    var mes = {
-      "event": "error",
-      "data": {
-        "errorCode": code,
-        "errMessage": message
-      }
-    };
-    connection.write(JSON.stringify(mes));
-  },
-
-  getConnection: function (destination) {
-    for (var user in this.users) {
-      if (this.users[user].id === destination) {
-        return this.users[user].userconnection;
-      }
-    }
-  },
-
-  // method to return list of users based on their phone numbers
-  getUsersFromNumber: function (number) {
-    var current_user;
-
-    for (var user in this.users) {
-      current_user = this.users[user];
-
-      if (current_user.phonenumber === number && current_user.available) {
-        return current_user.userName; // if we find a match let's return it
-      }
-    }
-
-    // if no users were found return false
+ChatServer.prototype.jsonTest = function(text) {
+  try {
+    JSON.parse(text);
+  } catch (error) {
     return false;
+  }
 
-    /*console.log(users_that_match.toString());
-    return users_that_match;*/
-  },
+  return true;
+};
 
-  sendMessage: function (connection, message) {
-    var message = JSON.stringify(message);
-    connection.write(message);
-  },
+ChatServer.prototype.fullDate = function() {
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth() + 1;
+  var yyyy = today.getFullYear();
+  var hr = today.getHours();
+  var mins = today.getMinutes();
+  var secs = today.getSeconds();
+  if (dd < 10) {
+    dd = '0' + dd;
+  }
+  if (mm < 10) {
+    mm = '0' + mm;
+  }
+  today = mm + '/' + dd + '/' + yyyy;
+  return "at " + dd + "/" + mm + "/" + yyyy + " " + hr + ":" + mins + ":" + secs;
+};
 
-  getUser: function (connection) {
-    for (var user in this.users) {
-      if (this.users[user].userconnection == connection) {
-        console.log("[returning user] ", this.users[user].userName);
-        return this.users[user].userName;
-      }
+/**
+* @method
+*/
+ChatServer.prototype.sendError = function(connection, code, message) {
+  var mes = {
+    "event": "error",
+    "data": {
+      "errorCode": code,
+      "errMessage": message
     }
+  };
+  connection.write(JSON.stringify(mes));
+};
 
-    return false;
-  },
-
-  fullDate: function () {
-    var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth() + 1;
-    var yyyy = today.getFullYear();
-    var hr = today.getHours();
-    var mins = today.getMinutes();
-    var secs = today.getSeconds();
-    if (dd < 10) {
-      dd = '0' + dd;
-    }
-    if (mm < 10) {
-      mm = '0' + mm;
-    }
-    today = mm + '/' + dd + '/' + yyyy;
-    return "at " + dd + "/" + mm + "/" + yyyy + " " + hr + ":" + mins + ":" + secs;
-  },
-
-  setAvailable: function (nickname) {
-    for (var user in this.users) {
-      var current_user = this.users[user];
-
-      if (current_user.userName === nickname) {
-        current_user.available = true;
-        return true;
-      }
+ChatServer.prototype.getConnection = function(destination) {
+  for (var user in this.users) {
+    if (this.users[user].id === destination) {
+      return this.users[user].userconnection;
     }
   }
 };
+
+// This method is unused. Only for testing purposes.
+// ChatServer.prototype.getUsersFromNumber = function(number) {
+//   var current_user;
+
+//   for (var user in this.users) {
+//     current_user = this.users[user];
+
+//     if (current_user.phonenumber === number && current_user.available) {
+//       return current_user.userName; // if we find a match let's return it
+//     }
+//   }
+
+//   // if no users were found return false
+//   return false;
+
+//   /*console.log(users_that_match.toString());
+//   return users_that_match;*/
+// };
+
+// Methods to check for available users and retrun first available
+// user object.
+
+ChatServer.prototype.isSomeoneAvailable = function(number) {
+  var _self = this;
+  var bool;
+  Object.keys(this.users).forEach(function (value, index, array1) {
+    if (_self.users[value].phonenumber === number) {
+      bool = true;
+    } 
+  });
+
+  return bool || false;
+};
+
+ChatServer.prototype.getUserbyNumber = function(number) {
+  var _self = this;
+  return Object.keys(this.users).filter(function(value, index, array1) {
+    if (_self.users[value].phonenumber === number) {
+      return _self.users[value];
+    }
+  })[0]; // This is ugly, but it works.
+};
+
+ChatServer.prototype.sendMessage = function(connection, message) {
+  var message = JSON.stringify(message);
+  connection.write(message);
+};
+
+ChatServer.prototype.getUser = function(connection) {
+  for (var user in this.users) {
+    if (this.users[user].userconnection == connection) {
+      console.log("[returning user] ", this.users[user].userName);
+      return this.users[user].userName;
+    }
+  }
+
+  return false;
+};
+
+ChatServer.prototype.setAvailable = function(nickname) {
+  // for (var user in this.users) {
+  //   var current_user = this.users[user];
+
+  //   if (current_user.userName === nickname) {
+  //     current_user.available = true;
+  //     return true;
+  //   }
+  // }
+  
+  if(this.users.hasOwnProperty(nickname)) {
+    this.users[nickname].available = true;
+    return true;
+  } else {
+    return false;
+  }
+};
+
+
+
+// End Utlities
+
+
 
 // Method to start the server. Must always be called or else
 // nothing runs, ever!
@@ -186,7 +223,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
     switch (eventType) {
 
-    case "message":
+      case "message":
       if (data) {
         var fullDate = this.fullDate();
 
@@ -199,28 +236,19 @@ ChatServer.prototype.respond = function (connection, request, users) {
         console.log(responseMessage);
 
         var conn = this.getConnection(destination);
-
-
-        // for (var user in this.users) {
-        //   if (this.users[user].id === destination) {
-        //     console.log(this.users[user]);
-        //     this.users[user].available = data.disconnected || false;
-        //   }
-        // }
         
-        Object.keys(this.users).forEach(function(user, user_index, users) {
-          if (_self.users[user].id === destination) {
-            console.log('[much user]', user.id);
-            _self.users[user].available = data.disconnected || false;
-          }
-        });
+        // Object.keys(this.users).forEach(function(user, user_index, users) {
+        //   if (_self.users[user].id === destination) {
+        //     console.log('[much user]', user.id);
+        //     _self.users[user].available = data.disconnected || false;
+        //   }
+        // });
 
         var rs = {
           "event": "message",
           "data": {
             "message": responseMessage,
-            "userName": this.getUser(connection) //,
-            // "be_availabe": data.disconnected
+            "userName": this.getUser(connection)
           }
         };
 
@@ -235,7 +263,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
       }
       break;
 
-    case "requestChat":
+      case "requestChat":
       var dest = data.destination;
       console.log("[to] ", dest);
       if (this.users[dest] && this.users[dest].userconnection === connection) {
@@ -254,28 +282,50 @@ ChatServer.prototype.respond = function (connection, request, users) {
         };
 
         this.sendMessage(connection, rspv);
-
-        if (data.newChat) { // this is a special condition sent by a mobile
-          var name = this.getUser(connection);
-
-          console.log("[user connection] ", name);
-          var message = {
-            "event": "new chat",
-            "data": {
-              "destination": name
-            }
-          };
-
-          var conexion = destino.userconnection;
-          destino.available = false; // this users i now occupied
-          this.sendMessage(conexion, message);
-        }
       } else {
+
         this.sendError(connection, 400, "Server couldn't process request");
       }
       break;
 
-    case "login":
+      case "new chat":
+      // {
+      //   "new chat",
+      //   "data": {
+      //     "number": "1234567890"
+      //   }
+      // }
+      
+      if (data.number !== undefined) {
+        if (this.isSomeoneAvailable(data.number)) {
+          var user = this.getUserbyNumber(data.number);
+          var message = { 
+            "event": "user_ready",
+            "data": {
+              "user": user.userName;
+            } 
+          };
+
+          var conx = user.userconnection;
+          this.sendMessage(conx, {
+            "event": "new chat",
+            "data": {
+              "destination": this.getUser(connection);
+            }
+          });
+
+          this.users[this.getUser(destinations)].available = false;
+          this.sendMessage(connection, message);
+        } else {
+          this.sendMessage(conenction, { "event": "no_users" });
+        }
+      } else {
+        this.sendError(connection, 406, "[please input a number.]");
+      }
+
+      break;
+
+      case "login":
       // check if this user was loged in before
       var user = data.nickname || data.phonenumber;
 
@@ -283,37 +333,29 @@ ChatServer.prototype.respond = function (connection, request, users) {
         connection.remoteAddress + 
         ' [at port] ' + 
         connection.remotePort);
-      if (user) {
+      if (user !== undefined) {
         if (this.users[user]) {
           console.log('[login user]');
           clearTimeout(_self.userTimeouts[user]);
           this.users[user].userconnection = connection;
-          console.log('[the connection object is]', this.users[user].userconnection.toString());
-          this.users[user].available = data.available; // this is a boolean!
+          console.log(
+            '[the connection object is]', 
+            this.users[user].userconnection.toString()
+          );
         } else {
           // let's register this guy!
           console.log('[adding user]');
           this.users[user] = {
             userconnection: connection,
             id: user + "" + connection.remotePort,
-            userName: user, // This might be causing problems.
+            userName: user, 
             phonenumber: data.phonenumber,
             available: true
           };
 
           console.log('[the connection object is]', this.users[user].userconnection.toString());
         }
-         
-        // console.log('[adding/login]')
-        // this.users[user] = {
-        //   userconnection: connection,
-        //   id: user + "" + connection.remotePort,
-        //   userName: user,
-        //   phoneNumber: data.phonenumber,
-        //   available: data.available || true
-        // };
-
-
+        
         this.sendMessage(connection, {
           "event": "user ok"
         });
@@ -323,46 +365,37 @@ ChatServer.prototype.respond = function (connection, request, users) {
       }
       break;
 
-    case 'get users':
-      var number = data.number;
-      console.log('[number request]', number);
-      var user = this.getUsersFromNumber(number);
-      console.log('[user is]', user);
-      var response_message = {};
+      // case 'get users':
+      // var number = data.number;
+      // console.log('[number request]', number);
+      // var user = this.getUsersFromNumber(number);
+      // console.log('[user is]', user);
+      // var data1 = { 
+      //   "event": "user_ready",
+      //   "data": { "user": user } 
+      // }, data2 = { "event": "no_users" };
 
-      setTimeout(function () {
-        if (user) {
-          response_message = {
-            "event": "user_ready",
-            "data": {
-              "user": user
-            }
-          };
-        } else {
-          response_message = {
-            "event": "no_users"
-          };
-        }
+      // this.sendMessage(connection, (user ? data1 : data2));
 
-        _self.sendMessage(connection, response_message);
-      }, 3000);
-      break;
+      // break;
 
-    case 'set available':
+      case 'set available':
       /*user = data.nickname;
-     this.users[user].available = true;*/
+      this.users[user].available = true;*/
       var nickname = data.nickname;
 
-      this.setAvailable(nickname);
+      // this.setAvailable(nickname);
+      
 
 
       break;
 
-    default:
+      default:
       this.sendError(connection, 400, "Server couldn't process request");
       break;
 
     }
+
   }
 };
 

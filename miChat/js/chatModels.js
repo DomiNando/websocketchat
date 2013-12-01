@@ -53,7 +53,6 @@ var ChatModel = Stapes.subclass({
       model.emit('open');
     };
   },
-
   onMessage: function () {
     var model = this;
     this.server.onmessage = function (response) {
@@ -81,22 +80,23 @@ var ChatModel = Stapes.subclass({
             'class': "external"
           };
 
-          if (data.be_available) {
-            model.sendData({
-              "event": "set available",
-              "data": {
-                "nickname": this.nickname
-              }
-            });
+          // if (data.be_available) {
+          //   model.sendData({
+          //     "event": "set available",
+          //     "data": {
+          //       "nickname": this.nickname
+          //     }
+          //   });
 
-            this.available = true;
-          } else {
-            this.available = false;
-          }
+          //   this.available = true;
+          // } else {
+          //   this.available = false;
+          // }
 
           console.log('data', dt);
           model.emit('new message', dt);
           model.addMessage(dt);
+          
           break;
         case "error":
           var code = data.errorCode;
