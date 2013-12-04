@@ -194,7 +194,7 @@ var ChatModel = Stapes.subclass({
 
     var info = {
       'user': this.username,
-      'message': message + fullDate,
+      'message': message + ' ' + fullDate,
       'class': 'own'
     };
 
