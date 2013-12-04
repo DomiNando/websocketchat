@@ -73,22 +73,6 @@ var ChatModel = Stapes.subclass({
 
         case "message":
           var chatMessage = data.message;
-          var today = new Date();
-          var dd = today.getDate();
-          var mm = today.getMonth() + 1;
-          var yyyy = today.getFullYear();
-          var hr = today.getHours();
-          var mins = today.getMinutes();
-          var secs = today.getSeconds();
-          if (dd < 10) {
-            dd = '0' + dd
-          } 
-          if (mm < 10) {
-            mm = '0' + mm
-          }
-          today = mm + '/' + dd + '/' + yyyy;
-          var fullDate = "at " + dd + "/" + mm + "/" + yyyy + " " + hr + ":" + mins + ":" + secs;
-          chatMessage += ' ' + fullDate;
           var userName = data.username;
           var dt = {
             'message': chatMessage,
@@ -181,10 +165,25 @@ var ChatModel = Stapes.subclass({
   },
 
   sendMessage: function (message) {
+    var today = new Date();
+          var dd = today.getDate();
+          var mm = today.getMonth() + 1;
+          var yyyy = today.getFullYear();
+          var hr = today.getHours();
+          var mins = today.getMinutes();
+          var secs = today.getSeconds();
+          if (dd < 10) {
+            dd = '0' + dd
+          } 
+          if (mm < 10) {
+            mm = '0' + mm
+          }
+          today = mm + '/' + dd + '/' + yyyy;
+          var fullDate = "at " + dd + "/" + mm + "/" + yyyy + " " + hr + ":" + mins + ":" + secs;
     var data = {
       'event': 'message',
       'data': {
-        'message': message,
+        'message': message + fullDate,
         'destinationId': _db.getItem('current_id')
       }
     };
