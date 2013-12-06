@@ -188,8 +188,6 @@ var ChatModel = Stapes.subclass({
       }
     };
 
-
-
     this.sendData(data);
 
     var info = {
