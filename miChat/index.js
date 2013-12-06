@@ -334,7 +334,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
       if (user !== undefined) {
         if (this.users[user]) {
           console.log('[login user]');
-          clearTimeout(_self.userTimeouts[user]);
+          clearTimeout(this.userTimeouts[user]);
           this.users[user].userconnection = connection;
           console.log(
             '[the connection object is]', 
