@@ -54,7 +54,7 @@ ChatView.proto({
     $('#messages').html(html);
 
     // code to scroll the chat down on every new message or render.
-    var height = $('messages')[0].scrollHeight;
+    var height =  document.getElementById("messages").scrollHeight;
     $('#messages').scrollTop(height);
   },
 
