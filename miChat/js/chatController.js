@@ -83,6 +83,7 @@ var ChatController = Stapes.subclass({
   renderAll: function () {
     this.store.save(this.model.getMessages());
     this.view.render(this.model.getMessages());
+    $('#messages').scrollTop($('#messages')[0].scrollHeight);
 
     if (this.model.size() > 0) {
       this.view.show();
