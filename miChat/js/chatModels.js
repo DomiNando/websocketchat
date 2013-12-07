@@ -138,7 +138,7 @@ var ChatModel = Stapes.subclass({
     this.sendData({
       "event": "web disconnected",
       "data": {
-        "destination": this.destinationId;
+        "destination": this.destinationId
       }
     });
 
