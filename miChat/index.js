@@ -83,27 +83,6 @@ ChatServer.prototype.getConnection = function(destination) {
   }
 };
 
-// This method is unused. Only for testing purposes.
-// ChatServer.prototype.getUsersFromNumber = function(number) {
-//   var current_user;
-
-//   for (var user in this.users) {
-//     current_user = this.users[user];
-
-//     if (current_user.phonenumber === number && current_user.available) {
-//       return current_user.username; // if we find a match let's return it
-//     }
-//   }
-
-//   // if no users were found return false
-//   return false;
-
-//   /*console.log(users_that_match.toString());
-//   return users_that_match;*/
-// };
-
-// Methods to check for available users and retrun first available
-// user object.
 
 ChatServer.prototype.isSomeoneAvailable = function(number) {
   var _self = this;
@@ -146,15 +125,7 @@ ChatServer.prototype.getUser = function(connection) {
 };
 
 ChatServer.prototype.setAvailable = function(nickname) {
-  // for (var user in this.users) {
-  //   var current_user = this.users[user];
 
-  //   if (current_user.username === nickname) {
-  //     current_user.available = true;
-  //     return true;
-  //   }
-  // }
-  
   if(this.users.hasOwnProperty(nickname)) {
     this.users[nickname].available = true;
     return true;
@@ -240,13 +211,6 @@ ChatServer.prototype.respond = function (connection, request, users) {
         console.log(responseMessage);
 
         var conn = this.getConnection(destination);
-        
-        // Object.keys(this.users).forEach(function(user, user_index, users) {
-        //   if (_self.users[user].id === destination) {
-        //     console.log('[much user]', user.id);
-        //     _self.users[user].available = data.disconnected || false;
-        //   }
-        // });
 
         var rs = {
           "event": "message",
@@ -364,20 +328,6 @@ ChatServer.prototype.respond = function (connection, request, users) {
       }
       break;
 
-      // case 'get users':
-      // var number = data.number;
-      // console.log('[number request]', number);
-      // var user = this.getUsersFromNumber(number);
-      // console.log('[user is]', user);
-      // var data1 = { 
-      //   "event": "user_ready",
-      //   "data": { "user": user } 
-      // }, data2 = { "event": "no_users" };
-
-      // this.sendMessage(connection, (user ? data1 : data2));
-
-      // break;
-
       case 'set available':
         /*user = data.nickname;
         this.users[user].available = true;*/
@@ -390,10 +340,20 @@ ChatServer.prototype.respond = function (connection, request, users) {
         });
 
         this.setAvailable(nickname);
-      
-
-
       break;
+
+      case 'web disconnect':
+        var destinysChild = data.destinaiton;
+        if (destinysChild) {
+          var enlace = this.getConnection(destinysChild);
+          var serverSaysZis = { "event": "web disconnect", "data": null };
+
+          try {
+            this.sendMessage(enlace, serverSaysZis);
+          } catch (e) {
+            enlace.write(JSON.stringify(serverSaysZis));
+          }
+        }
 
       default:
       this.sendError(connection, 400, "Server couldn't process request");

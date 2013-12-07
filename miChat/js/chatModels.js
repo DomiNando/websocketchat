@@ -17,6 +17,7 @@ var ChatModel = Stapes.subclass({
     this.server.onclose = this.onClose();
 
     this.available = true;
+    this.destinationId = undefined;
   },
 
   setDestinationId: function (id) {
@@ -48,13 +49,13 @@ var ChatModel = Stapes.subclass({
 
   onOpen: function () {
     console.log('[open]');
-    var model = this;
+    var _self = this;
     this.server.onopen = function () {
-      model.emit('open');
+      _self.emit('open');
     };
   },
   onMessage: function () {
-    var model = this;
+    var _self = this;
     this.server.onmessage = function (response) {
 
       if (typeof response === 'object') {
@@ -64,11 +65,11 @@ var ChatModel = Stapes.subclass({
 
         switch (event) {
         case 'user ok':
-          model.emit('user ok');
+          _self.emit('user ok');
           break;
         case "request ok":
-          model.setDestinationId(data.userId);
-          model.emit('request ok');
+          _self.setDestinationId(data.userId);
+          _self.emit('request ok');
           break;
 
         case "message":
@@ -81,7 +82,7 @@ var ChatModel = Stapes.subclass({
           };
 
           // if (data.be_available) {
-          //   model.sendData({
+          //   _self.sendData({
           //     "event": "set available",
           //     "data": {
           //       "nickname": this.nickname
@@ -94,14 +95,14 @@ var ChatModel = Stapes.subclass({
           // }
 
           console.log('data', dt);
-          model.emit('new message', dt);
-          model.addMessage(dt);
+          _self.emit('new message', dt);
+          _self.addMessage(dt);
           
           break;
         case "error":
           var code = data.errorCode;
           var errorMessage = data.errMessage;
-          model.emit('error', {
+          _self.emit('error', {
             code: code,
             message: errorMessage
           });
@@ -115,10 +116,10 @@ var ChatModel = Stapes.subclass({
             }
           };
 
-          model.sendData(datum);
+          _self.sendData(datum);
           break;
         default:
-          model.emit('sosumi');
+          _self.emit('sosumi');
           break;
         }
       }
@@ -135,6 +136,12 @@ var ChatModel = Stapes.subclass({
   },
 
   close: function () {
+    this.sendData({
+      "event": "web disconnected",
+      "data": {
+        "destination": this.destinationId;
+      }
+    });
     this.server.close();
   },
 
