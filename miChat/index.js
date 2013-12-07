@@ -342,7 +342,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
         this.setAvailable(nickname);
       break;
 
-      case 'web disconnect':
+      case 'web disconnected':
         var destinysChild = data.destinaiton;
         if (destinysChild) {
           var enlace = this.getConnection(destinysChild);
