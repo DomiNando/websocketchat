@@ -343,7 +343,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
       break;
 
       case 'web disconnected':
-        var destinysChild = data.destinaiton;
+        var destinysChild = data.destination;
         if (destinysChild) {
           var enlace = this.getConnection(destinysChild);
           var serverSaysZis = { "event": "web disconnect", "data": null };
