@@ -236,7 +236,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
         responseMessage += " " + fullDate;
         var destination = data.destinationId;
 
-        console.log('[message to]', data.username);
+        console.log('[message to]', destination);
         console.log(responseMessage);
 
         var conn = this.getConnection(destination);
