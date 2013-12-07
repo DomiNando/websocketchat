@@ -354,7 +354,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
             enlace.write(JSON.stringify(serverSaysZis));
           }
         }
-
+        break;
       default:
       this.sendError(connection, 400, "Server couldn't process request");
       break;
