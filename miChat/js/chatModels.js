@@ -17,7 +17,6 @@ var ChatModel = Stapes.subclass({
     this.server.onclose = this.onClose();
 
     this.available = true;
-    this.destinationId = undefined;
   },
 
   setDestinationId: function (id) {
@@ -139,9 +138,10 @@ var ChatModel = Stapes.subclass({
     this.sendData({
       "event": "web disconnected",
       "data": {
-        "destination": this.destinationId
+        "destination": this.destinationId;
       }
     });
+
     this.server.close();
   },
 
