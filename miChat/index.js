@@ -33,7 +33,7 @@ function ChatServer(chat_port, chat_prefix) {
 
 // Utilites
 
-ChatServer.prototype.jsonTest = function(text) {
+ChatServer.prototype.jsonTest = function (text) {
   try {
     JSON.parse(text);
   } catch (error) {
@@ -43,7 +43,7 @@ ChatServer.prototype.jsonTest = function(text) {
   return true;
 };
 
-ChatServer.prototype.fullDate = function() {
+ChatServer.prototype.fullDate = function () {
   var today = new Date();
   var dd = today.getDate();
   var mm = today.getMonth() + 1;
@@ -62,9 +62,9 @@ ChatServer.prototype.fullDate = function() {
 };
 
 /**
-* @method
-*/
-ChatServer.prototype.sendError = function(connection, code, message) {
+ * @method
+ */
+ChatServer.prototype.sendError = function (connection, code, message) {
   var mes = {
     "event": "error",
     "data": {
@@ -75,7 +75,7 @@ ChatServer.prototype.sendError = function(connection, code, message) {
   connection.write(JSON.stringify(mes));
 };
 
-ChatServer.prototype.getConnection = function(destination) {
+ChatServer.prototype.getConnection = function (destination) {
   for (var user in this.users) {
     if (this.users[user].id === destination) {
       return this.users[user].userconnection;
@@ -84,19 +84,19 @@ ChatServer.prototype.getConnection = function(destination) {
 };
 
 
-ChatServer.prototype.isSomeoneAvailable = function(number) {
+ChatServer.prototype.isSomeoneAvailable = function (number) {
   var _self = this;
   var bool;
   Object.keys(this.users).forEach(function (value, index, array1) {
     if (_self.users[value].phonenumber === number && _self.users[value].available) {
       bool = true;
-    } 
+    }
   });
 
   return bool || false;
 };
 
-ChatServer.prototype.getUserbyNumber = function(number) {
+ChatServer.prototype.getUserbyNumber = function (number) {
   var _self = this;
   var username;
   Object.keys(this.users).forEach(function (value, index, array1) {
@@ -108,12 +108,12 @@ ChatServer.prototype.getUserbyNumber = function(number) {
   return username || false;
 };
 
-ChatServer.prototype.sendMessage = function(connection, message) {
+ChatServer.prototype.sendMessage = function (connection, message) {
   var message = JSON.stringify(message);
   connection.write(message);
 };
 
-ChatServer.prototype.getUser = function(connection) {
+ChatServer.prototype.getUser = function (connection) {
   for (var user in this.users) {
     if (this.users[user].userconnection === connection) {
       console.log("[returning user] ", this.users[user].username);
@@ -124,9 +124,9 @@ ChatServer.prototype.getUser = function(connection) {
   return false;
 };
 
-ChatServer.prototype.setAvailable = function(nickname) {
+ChatServer.prototype.setAvailable = function (nickname) {
 
-  if(this.users.hasOwnProperty(nickname)) {
+  if (this.users.hasOwnProperty(nickname)) {
     this.users[nickname].available = true;
     return true;
   } else {
@@ -197,7 +197,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
     switch (eventType) {
 
-      case "message":
+    case "message":
       if (data) {
         var fullDate = this.fullDate();
 
@@ -231,7 +231,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
       }
       break;
 
-      case "requestChat":
+    case "requestChat":
       var dest = data.destination;
       console.log("[to] ", dest);
       if (this.users[dest] && this.users[dest].userconnection === connection) {
@@ -249,6 +249,8 @@ ChatServer.prototype.respond = function (connection, request, users) {
           }
         };
 
+        connection.chatingWith = dest;
+
         this.sendMessage(connection, rspv);
       } else {
 
@@ -256,20 +258,20 @@ ChatServer.prototype.respond = function (connection, request, users) {
       }
       break;
 
-      case "new chat":
+    case "new chat":
 
       if (data.number !== undefined) {
         if (this.isSomeoneAvailable(data.number)) {
           var username = this.getUserbyNumber(data.number);
           var user = this.users[username];
-          var message = { 
+          var message = {
             "event": "user_ready",
             "data": {
               "user": username
-            } 
+            }
           };
 
-          
+
           this.sendMessage(this.users[username].userconnection, {
             "event": "new chat",
             "data": {
@@ -280,7 +282,9 @@ ChatServer.prototype.respond = function (connection, request, users) {
           this.users[username].available = false;
           this.sendMessage(connection, message);
         } else {
-          this.sendMessage(connection, { "event": "no_users" });
+          this.sendMessage(connection, {
+            "event": "no_users"
+          });
         }
       } else {
         this.sendError(connection, 406, "[please input a number.]");
@@ -288,13 +292,13 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
       break;
 
-      case "login":
+    case 'login':
       // check if this user was loged in before
       var user = data.nickname || data.phonenumber;
 
-      console.log('[now using connection with ip ] ' + 
-        connection.remoteAddress + 
-        ' [at port] ' + 
+      console.log('[now using connection with ip ] ' +
+        connection.remoteAddress +
+        ' [at port] ' +
         connection.remotePort);
       if (user !== undefined) {
         if (this.users[user]) {
@@ -302,7 +306,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
           clearTimeout(this.userTimeouts[user]);
           this.users[user].userconnection = connection;
           console.log(
-            '[the connection object is]', 
+            '[the connection object is]',
             this.users[user].userconnection.toString()
           );
         } else {
@@ -311,14 +315,14 @@ ChatServer.prototype.respond = function (connection, request, users) {
           this.users[user] = {
             userconnection: connection,
             id: user + "" + connection.remotePort,
-            username: user, 
+            username: user,
             phonenumber: data.phonenumber,
             available: true
           };
 
           console.log('[the connection object is]', this.users[user].userconnection.toString());
         }
-        
+
         this.sendMessage(connection, {
           "event": "user ok"
         });
@@ -328,34 +332,37 @@ ChatServer.prototype.respond = function (connection, request, users) {
       }
       break;
 
-      case 'set available':
-        /*user = data.nickname;
+    case 'set available':
+      /*user = data.nickname;
         this.users[user].available = true;*/
-        var nickname;
+      var nickname;
 
-        Object.keys(this.users).forEach(function (value, index, array) {
-          if (_self.users[value].id === data.destinationId) {
-            nickname = _self.users[value].username;
-          }
-        });
+      Object.keys(this.users).forEach(function (value, index, array) {
+        if (_self.users[value].id === data.destinationId) {
+          nickname = _self.users[value].username;
+        }
+      });
 
-        this.setAvailable(nickname);
+      this.setAvailable(nickname);
       break;
 
-      case 'web disconnected':
-        var destinysChild = data.destination;
-        if (destinysChild) {
-          var enlace = this.getConnection(destinysChild);
-          var serverSaysZis = { "event": "web disconnect", "data": null };
+    case 'web disconnected':
+      var destinysChild = data.destination;
+      if (destinysChild) {
+        var enlace = this.getConnection(destinysChild);
+        var serverSaysZis = {
+          "event": "web disconnect",
+          "data": null
+        };
 
-          try {
-            this.sendMessage(enlace, serverSaysZis);
-          } catch (e) {
-            enlace.write(JSON.stringify(serverSaysZis));
-          }
+        try {
+          this.sendMessage(enlace, serverSaysZis);
+        } catch (e) {
+          enlace.write(JSON.stringify(serverSaysZis));
         }
-        break;
-      default:
+      }
+      break;
+    default:
       this.sendError(connection, 400, "Server couldn't process request");
       break;
 
@@ -381,8 +388,9 @@ ChatServer.prototype.close = function (connection) {
       console.log("[user deleted] ", this.users[user].id);
       this.userTimeouts[this.users[user].username] = setTimeout(function () {
         console.log('[user really deleted!]');
+        _self.setAvailable(_self.getUser(_self.getConnection(connection.chatingWith)));
         delete _self.users[user];
-      },30000);
+      }, 30000);
 
     } else {
       console.log("[no user deleted]");
