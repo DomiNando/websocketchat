@@ -61,10 +61,17 @@ ChatServer.prototype.fullDate = function () {
   return "at " + dd + "/" + mm + "/" + yyyy + " " + hr + ":" + mins + ":" + secs;
 };
 
-/**
- * @method
- */
-ChatServer.prototype.sendError = function (connection, code, message) {
+ChatServer.prototype.getNickname = function(id) = {
+  var nickname;
+  Object.keys(this.users).forEach(function (value, index, array) {
+    if (_self.users[value].id === id) {
+      nickname = _self.users[value].username;
+    }
+  });
+  return nickname || false;
+};
+
+ChatServer.prototype.sendError = function(connection, code, message) {
   var mes = {
     "event": "error",
     "data": {
@@ -249,7 +256,8 @@ ChatServer.prototype.respond = function (connection, request, users) {
           }
         };
 
-        connection.chatingWith = dest;
+        var connectedUser = this.getUser(connection);
+        this.users[connectedUser].chatingWith = dest;
 
         this.sendMessage(connection, rspv);
       } else {
@@ -317,7 +325,8 @@ ChatServer.prototype.respond = function (connection, request, users) {
             id: user + "" + connection.remotePort,
             username: user,
             phonenumber: data.phonenumber,
-            available: true
+            available: true,
+            chatingWith: null
           };
 
           console.log('[the connection object is]', this.users[user].userconnection.toString());
@@ -335,14 +344,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
     case 'set available':
       /*user = data.nickname;
         this.users[user].available = true;*/
-      var nickname;
-
-      Object.keys(this.users).forEach(function (value, index, array) {
-        if (_self.users[value].id === data.destinationId) {
-          nickname = _self.users[value].username;
-        }
-      });
-
+      var nickname = this.getNickname(data.destinationId);
       this.setAvailable(nickname);
       break;
 
@@ -373,7 +375,6 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
 ChatServer.prototype.close = function (connection) {
   var _self = this;
-  var chatingWith = connection.chatingWith;
   console.log("[closed connection] ", connection.remoteAddress + ":" + connection.remotePort);
   // console.log("users", users); // uncomment for debuging
 
@@ -389,7 +390,7 @@ ChatServer.prototype.close = function (connection) {
       console.log("[user deleted] ", this.users[user].id);
       this.userTimeouts[this.users[user].username] = setTimeout(function () {
         console.log('[user really deleted!]');
-        _self.setAvailable(_self.getUser(_self.getConnection(chatingWith)));
+        _self.setAvailable(_self.users[user].chatingWith);
         delete _self.users[user];
       }, 30000);
 
