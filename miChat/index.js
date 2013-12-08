@@ -61,7 +61,7 @@ ChatServer.prototype.fullDate = function () {
   return "at " + dd + "/" + mm + "/" + yyyy + " " + hr + ":" + mins + ":" + secs;
 };
 
-ChatServer.prototype.getNickname = function(id) = {
+ChatServer.prototype.getNickname = function(id) {
   var nickname;
   Object.keys(this.users).forEach(function (value, index, array) {
     if (_self.users[value].id === id) {
