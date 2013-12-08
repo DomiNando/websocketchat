@@ -373,6 +373,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
 ChatServer.prototype.close = function (connection) {
   var _self = this;
+  var chatingWith = connection.chatingWith;
   console.log("[closed connection] ", connection.remoteAddress + ":" + connection.remotePort);
   // console.log("users", users); // uncomment for debuging
 
@@ -388,7 +389,7 @@ ChatServer.prototype.close = function (connection) {
       console.log("[user deleted] ", this.users[user].id);
       this.userTimeouts[this.users[user].username] = setTimeout(function () {
         console.log('[user really deleted!]');
-        _self.setAvailable(_self.getUser(_self.getConnection(connection.chatingWith)));
+        _self.setAvailable(_self.getUser(_self.getConnection(chatingWith)));
         delete _self.users[user];
       }, 30000);
 
