@@ -219,6 +219,15 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
         var conn = this.getConnection(destination);
 
+        var connectedUser = this.getUser(connection);
+        clearTimeout(this.users[connectedUser].heartbeat);
+        this.users[connectedUser].heartbeat = setTimeout(function () {
+          if (!isNaN(parseInt(_self.users[connectedUser].username, 10))) {
+            _self.setAvailable(_self.users[connectedUser].chatingWith);
+            delete _self.users[user];
+          }
+        }, 30000);
+
         var rs = {
           "event": "message",
           "data": {
@@ -258,6 +267,12 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
         var connectedUser = this.getUser(connection);
         this.users[connectedUser].chatingWith = dest;
+        this.users[connectedUser].heartbeat = setTimeout(function () {
+          if (!isNaN(parseInt(_self.users[connectedUser].username, 10))) {
+            _self.setAvailable(_self.users[connectedUser].chatingWith);
+            delete _self.users[user];
+          }
+        }, 30000);
 
         this.sendMessage(connection, rspv);
       } else {
@@ -326,7 +341,8 @@ ChatServer.prototype.respond = function (connection, request, users) {
             username: user,
             phonenumber: data.phonenumber,
             available: true,
-            chatingWith: null
+            chatingWith: null,
+            heartbeat: null
           };
 
           console.log('[the connection object is]', this.users[user].userconnection.toString());
@@ -390,7 +406,6 @@ ChatServer.prototype.close = function (connection) {
       console.log("[user deleted] ", this.users[user].id);
       this.userTimeouts[this.users[user].username] = setTimeout(function () {
         console.log('[user really deleted!]');
-        _self.setAvailable(_self.users[user].chatingWith);
         delete _self.users[user];
       }, 30000);
 
