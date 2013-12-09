@@ -222,8 +222,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
         var connectedUser = this.getUser(connection);
         clearTimeout(this.users[connectedUser].heartbeat);
         this.users[connectedUser].heartbeat = setTimeout(function () {
-         
-          try {
+          if (_self.users[connectedUser] !== undefined) {
             if (!isNaN(parseInt(_self.users[connectedUser].username, 10))) {
             var connecti = _self.users[connectedUser].userconnection;
             var rls = {
@@ -241,9 +240,9 @@ ChatServer.prototype.respond = function (connection, request, users) {
             _self.setAvailable(_self.users[connectedUser].chatingWith);
             delete _self.users[connectedUser];
           }
-        } catch (e) {
-          console.log('fail');
         }
+          }
+          
         }, 40000);
 
         var rs = {
