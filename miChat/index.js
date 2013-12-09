@@ -225,24 +225,15 @@ ChatServer.prototype.respond = function (connection, request, users) {
          
           if (!isNaN(parseInt(_self.users[connectedUser].username, 10))) {
             var connecti = _self.users[connectedUser].userconnection;
-            var rs = {
+            var rls = {
               "event": "message",
               "data": {
                 "message": "You have been disconnected, please try again",
                 "username": "server"
               }
             };
-             var conne = _self.getConnection(_self.users[_self.users[connectedUser].chatingWith].id);
             try {
-              connecti.write(JSON.stringify(rs));
-              var mes = JSON.stringify({
-                "event": "message",
-                "data": {
-                  "message": responseMessage,
-                  "username": connectedUser
-                }
-              });
-              conne.write(mes);
+              connecti.write(JSON.stringify(rls));
             } catch (e) {
               console.log('[fail]');
             }
