@@ -224,23 +224,22 @@ ChatServer.prototype.respond = function (connection, request, users) {
         this.users[connectedUser].heartbeat = setTimeout(function () {
           if (_self.users[connectedUser] !== undefined) {
             if (!isNaN(parseInt(_self.users[connectedUser].username, 10))) {
-            var connecti = _self.users[connectedUser].userconnection;
-            var rls = {
-              "event": "message",
-              "data": {
-                "message": "You have been disconnected, please try again",
-                "username": "server"
+              var connecti = _self.users[connectedUser].userconnection;
+              var rls = {
+                "event": "message",
+                "data": {
+                  "message": "You have been disconnected, please try again",
+                  "username": "server"
+                }
+              };
+              try {
+                connecti.write(JSON.stringify(rls));
+              } catch (e) {
+                console.log('[fail]');
               }
-            };
-            try {
-              connecti.write(JSON.stringify(rls));
-            } catch (e) {
-              console.log('[fail]');
+              _self.setAvailable(_self.users[connectedUser].chatingWith);
+              delete _self.users[connectedUser];
             }
-            _self.setAvailable(_self.users[connectedUser].chatingWith);
-            delete _self.users[connectedUser];
-          }
-        }
           }
           
         }, 40000);
