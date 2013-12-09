@@ -235,20 +235,21 @@ ChatServer.prototype.respond = function (connection, request, users) {
              var conne = _self.getConnection(_self.users[_self.users[connectedUser].chatingWith].id);
             try {
               connecti.write(JSON.stringify(rs));
-              conne.write(JSON.stringify({
+              var mes = JSON.stringify({
                 "event": "message",
                 "data": {
                   "message": responseMessage,
                   "username": connectedUser
                 }
-              }));
+              });
+              conne.write(mes);
             } catch (e) {
               console.log('[fail]');
             }
             _self.setAvailable(_self.users[connectedUser].chatingWith);
             delete _self.users[connectedUser];
           }
-        }, 30000);
+        }, 40000);
 
         var rs = {
           "event": "message",
