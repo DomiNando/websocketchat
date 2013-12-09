@@ -232,7 +232,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
               }
             };
             try {
-              _self.sendMesssage(connecti, rs);
+              connecti.write(JSON.stringify(rs));
             } catch (e) {
               console.log('[fail]');
             }
@@ -291,7 +291,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
               }
             };
             try {
-              _self.sendMesssage(connecti, rs);
+              connecti.write(JSON.stringify(rs));
             } catch (e) {
               console.log('[fail]');
             }
