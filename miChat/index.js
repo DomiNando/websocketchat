@@ -222,7 +222,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
         var connectedUser = this.getUser(connection);
         clearTimeout(this.users[connectedUser].heartbeat);
         this.users[connectedUser].heartbeat = setTimeout(function () {
-          var conne = conn;
+         
           if (!isNaN(parseInt(_self.users[connectedUser].username, 10))) {
             var connecti = _self.users[connectedUser].userconnection;
             var rs = {
@@ -232,6 +232,7 @@ ChatServer.prototype.respond = function (connection, request, users) {
                 "username": "server"
               }
             };
+             var conne = _self.getConnection(_self.users[_self.users[connectedUser].chatingWith].id);
             try {
               connecti.write(JSON.stringify(rs));
               conne.write(JSON.stringify({
