@@ -387,27 +387,31 @@ ChatServer.prototype.respond = function (connection, request, users) {
     case 'set available':
       /*user = data.nickname;
         this.users[user].available = true;*/
-      var nickname = this.getNickname(data.destinationId);
-      this.setAvailable(nickname);
+        var nickname;
+
+        Object.keys(this.users).forEach(function (value, index, array) {
+          if (_self.users[value].id === data.destinationId) {
+            nickname = _self.users[value].username;
+          }
+        });
+
+        this.setAvailable(nickname);
       break;
 
-    case 'web disconnected':
-      var destinysChild = data.destination;
-      if (destinysChild) {
-        var enlace = this.getConnection(destinysChild);
-        var serverSaysZis = {
-          "event": "web disconnect",
-          "data": null
-        };
+      case 'web disconnected':
+        var destinysChild = data.destination;
+        if (destinysChild) {
+          var enlace = this.getConnection(destinysChild);
+          var serverSaysZis = { "event": "web disconnect", "data": null };
 
-        try {
-          this.sendMessage(enlace, serverSaysZis);
-        } catch (e) {
-          enlace.write(JSON.stringify(serverSaysZis));
+          try {
+            this.sendMessage(enlace, serverSaysZis);
+          } catch (e) {
+            enlace.write(JSON.stringify(serverSaysZis));
+          }
         }
-      }
-      break;
-    default:
+        break;
+      default:
       this.sendError(connection, 400, "Server couldn't process request");
       break;
 
