@@ -233,6 +233,8 @@ ChatServer.prototype.respond = function (connection, request, users) {
             };
             try {
               _self.sendMesssage(connecti, rs);
+            } catch (e) {
+              console.log('[fail]');
             }
             _self.setAvailable(_self.users[connectedUser].chatingWith);
             delete _self.users[user];
@@ -290,6 +292,8 @@ ChatServer.prototype.respond = function (connection, request, users) {
             };
             try {
               _self.sendMesssage(connecti, rs);
+            } catch (e) {
+              console.log('[fail]');
             }
             _self.setAvailable(_self.users[connectedUser].chatingWith);
             delete _self.users[user];
