@@ -269,6 +269,15 @@ ChatServer.prototype.respond = function (connection, request, users) {
         this.users[connectedUser].chatingWith = dest;
         this.users[connectedUser].heartbeat = setTimeout(function () {
           if (!isNaN(parseInt(_self.users[connectedUser].username, 10))) {
+            var connecti = _self.users[connectedUser].userconnection;
+            var rs = {
+              "event": "message",
+              "data": {
+                "message": "You have been disconnected, please try again",
+                "username": "server"
+              }
+            };
+            _self.sendMesssage(connecti, rs);
             _self.setAvailable(_self.users[connectedUser].chatingWith);
             delete _self.users[user];
           }
