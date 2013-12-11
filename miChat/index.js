@@ -1,5 +1,9 @@
 /*global require, console,  process, __dirname, module, exports */
+<<<<<<< HEAD
 
+=======
+// Include libraries need to run the chat server.
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 var express = require('express');
 var chat_http = require('http');
 var main_server = express();
@@ -12,7 +16,12 @@ var sockjs_opts = {
 };
 
 // This is the constructor for the ChatServer class.
+<<<<<<< HEAD
 .
+=======
+// Notice constructors start with upper-case letters; methods
+// start with lower-case.
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 function ChatServer(chat_port, chat_prefix) {
   // we're in strict mode here. If this fails, everything
   // fails.
@@ -31,7 +40,11 @@ function ChatServer(chat_port, chat_prefix) {
 }
 
 // Utilites
+<<<<<<< HEAD
 //Tests if something is a JSON
+=======
+
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 ChatServer.prototype.jsonTest = function (text) {
   try {
     JSON.parse(text);
@@ -42,7 +55,10 @@ ChatServer.prototype.jsonTest = function (text) {
   return true;
 };
 
+<<<<<<< HEAD
 //Creates the full date to be added to the messages
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 ChatServer.prototype.fullDate = function () {
   var today = new Date();
   var dd = today.getDate();
@@ -61,7 +77,10 @@ ChatServer.prototype.fullDate = function () {
   return "at " + dd + "/" + mm + "/" + yyyy + " " + hr + ":" + mins + ":" + secs;
 };
 
+<<<<<<< HEAD
 //Returns the username of a user using the id
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 ChatServer.prototype.getNickname = function(id) {
   var nickname;
   Object.keys(this.users).forEach(function (value, index, array) {
@@ -72,8 +91,11 @@ ChatServer.prototype.getNickname = function(id) {
   return nickname || false;
 };
 
+<<<<<<< HEAD
 
 //Sends an error JSON using the error code and error message
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 ChatServer.prototype.sendError = function(connection, code, message) {
   var mes = {
     "event": "error",
@@ -85,8 +107,11 @@ ChatServer.prototype.sendError = function(connection, code, message) {
   connection.write(JSON.stringify(mes));
 };
 
+<<<<<<< HEAD
 
 //Gets the connection using a username
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 ChatServer.prototype.getConnection = function (destination) {
   for (var user in this.users) {
     if (this.users[user].id === destination) {
@@ -95,7 +120,11 @@ ChatServer.prototype.getConnection = function (destination) {
   }
 };
 
+<<<<<<< HEAD
 //Checks if an agent is available for a certain phone number
+=======
+
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 ChatServer.prototype.isSomeoneAvailable = function (number) {
   var _self = this;
   var bool;
@@ -108,8 +137,11 @@ ChatServer.prototype.isSomeoneAvailable = function (number) {
   return bool || false;
 };
 
+<<<<<<< HEAD
 
 //Returns a username using the phone number as input
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 ChatServer.prototype.getUserbyNumber = function (number) {
   var _self = this;
   var username;
@@ -122,14 +154,20 @@ ChatServer.prototype.getUserbyNumber = function (number) {
   return username || false;
 };
 
+<<<<<<< HEAD
 //Sends the message parameter to the connection object received as a parameter
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 ChatServer.prototype.sendMessage = function (connection, message) {
   var message = JSON.stringify(message);
   connection.write(message);
 };
 
+<<<<<<< HEAD
 
 //Returns a username using the connection parameter
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 ChatServer.prototype.getUser = function (connection) {
   for (var user in this.users) {
     if (this.users[user].userconnection === connection) {
@@ -141,8 +179,11 @@ ChatServer.prototype.getUser = function (connection) {
   return false;
 };
 
+<<<<<<< HEAD
 
 //Sets the available property of the user who has the name matching the nickname parameter.
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 ChatServer.prototype.setAvailable = function (nickname) {
 
   if (this.users.hasOwnProperty(nickname)) {
@@ -168,21 +209,30 @@ ChatServer.prototype.start = function () {
     console.log('chat is listening on port', _self.port_number);
   });
 
+<<<<<<< HEAD
 //Handles the page connections
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
   this.chat_server.installHandlers(http_server, {
     prefix: this.prefix
   });
 
   main_server.use('/js', express.static(__dirname + '/js'));
 
+<<<<<<< HEAD
 //Listener for a connection being received
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
   this.chat_server.on('connection', function (connection) {
     console.log("[new connection]", connection.remoteAddress);
     console.log("[port] ", connection.remotePort);
     console.log(connection.remoteAddress + ":" + connection.remotePort);
 
+<<<<<<< HEAD
 
 //Listener for data being received
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
     connection.on('data', function (request) {
       _self.respond(connection, request);
     });
@@ -194,7 +244,11 @@ ChatServer.prototype.start = function () {
   });
 };
 
+<<<<<<< HEAD
 // Method that handles message handling, between the client
+=======
+// Method that handles message handleing, between the client
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 // and the server.
 ChatServer.prototype.respond = function (connection, request, users) {
   // let's make sure the request is not empty or not valid json
@@ -220,7 +274,10 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
     switch (eventType) {
 
+<<<<<<< HEAD
 //In the case that a message event is received... can send a message event back...
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
     case "message":
       if (data) {
         var fullDate = this.fullDate();
@@ -280,8 +337,11 @@ ChatServer.prototype.respond = function (connection, request, users) {
       }
       break;
 
+<<<<<<< HEAD
 
 //In the case a requestChat event is received... can send a request ok event...
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
     case "requestChat":
       var dest = data.destination;
       console.log("[to] ", dest);
@@ -329,8 +389,11 @@ ChatServer.prototype.respond = function (connection, request, users) {
       }
       break;
 
+<<<<<<< HEAD
 
 //In the case a new chat event is received... can send a new chat event, or a no users event...
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
     case "new chat":
 
       if (data.number !== undefined) {
@@ -365,7 +428,10 @@ ChatServer.prototype.respond = function (connection, request, users) {
 
       break;
 
+<<<<<<< HEAD
 //In the case a login event is received... can send a user ok event...
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
     case 'login':
       // check if this user was loged in before
       var user = data.nickname || data.phonenumber;
@@ -408,7 +474,10 @@ ChatServer.prototype.respond = function (connection, request, users) {
       }
       break;
 
+<<<<<<< HEAD
 //In the case a set available event is received...
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
     case 'set available':
       /*user = data.nickname;
         this.users[user].available = true;*/
@@ -423,8 +492,11 @@ ChatServer.prototype.respond = function (connection, request, users) {
         this.setAvailable(nickname);
       break;
 
+<<<<<<< HEAD
 
 //In the case a web disconnected event is received...
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
       case 'web disconnected':
         var destinysChild = data.destination;
         if (destinysChild) {
@@ -447,14 +519,24 @@ ChatServer.prototype.respond = function (connection, request, users) {
   }
 };
 
+<<<<<<< HEAD
 
 //Handles the close event
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 ChatServer.prototype.close = function (connection) {
   var _self = this;
   console.log("[closed connection] ", connection.remoteAddress + ":" + connection.remotePort);
   // console.log("users", users); // uncomment for debuging
 
+<<<<<<< HEAD
   
+=======
+  // we need to find a way to eliminates this for loop.
+  // It might be taking too much time!
+  // I think there might be a method to find an object within
+  // another object. Without using for each loops.
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
   for (var user in this.users) {
     console.log("current user is: ", this.users[user].id);
     var userconnection = this.users[user].userconnection;

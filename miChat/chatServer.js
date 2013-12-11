@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 //Creates new chat server
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
 var ChatServer = require('./index');
 
 var prefix = null, 

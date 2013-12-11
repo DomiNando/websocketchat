@@ -19,7 +19,10 @@ var ChatModel = Stapes.subclass({
     this.available = true;
   },
 
+<<<<<<< HEAD
 //Sets the id for the destination who will receive the messages
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
   setDestinationId: function (id) {
     if (id) {
       this.destinationId = id;
@@ -29,8 +32,12 @@ var ChatModel = Stapes.subclass({
     }
   },
 
+<<<<<<< HEAD
 //Logs in a user by username and phonenumber and sends the data to the chat server
   login: function (phoneNumber, userName) { 
+=======
+  login: function (phoneNumber, userName) { //CAMBIE!!
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
     this.username = 'Me';
     this.phoneNumber = phoneNumber || null;
     this.nickname = userName; 
@@ -56,8 +63,11 @@ var ChatModel = Stapes.subclass({
       _self.emit('open');
     };
   },
+<<<<<<< HEAD
 
 //Reacts to the message event
+=======
+>>>>>>> 41a1d980455d1e35ddd4448ac6a9c659bbd21e8d
   onMessage: function () {
     var _self = this;
     this.server.onmessage = function (response) {
