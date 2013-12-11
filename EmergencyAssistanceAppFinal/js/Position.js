@@ -17,7 +17,7 @@ function Position(position, datetime, country, state, city, mobile)
     this.getMaxPositions = function()
     {
         return MAX_POSITIONS;
-    };
+    }
 
 
 
@@ -40,15 +40,13 @@ function Position(position, datetime, country, state, city, mobile)
         positions.unshift(new Position(position, new Date(), country, state, city, mobile));
 
 
-        if (positions.length > this.MAX_POSITIONS) 
-        {
+        if (positions.length > this.MAX_POSITIONS)
             positions = positions.slice(0, this.MAX_POSITIONS);
-        }
 
         _db.setItem('positions', JSON.stringify(positions));
 
         return positions;
-    };
+    }
 
     this.updatePosition = function(index, position, country, state, city, mobile)
     {
@@ -73,7 +71,7 @@ function Position(position, datetime, country, state, city, mobile)
         _db.setItem('positions', JSON.stringify(positions));
 
         return positions;
-    };
+    }
 
     this.getPositions = function()
     {
@@ -92,7 +90,7 @@ function Position(position, datetime, country, state, city, mobile)
             positions = [];
 
         return positions;
-    };
+    }
 
     this.deletePosition = function(index)
     {
@@ -113,7 +111,7 @@ function Position(position, datetime, country, state, city, mobile)
         _db.setItem('positions', JSON.stringify(positions));
 
         return positions;
-    };
+    }
 
 }
 

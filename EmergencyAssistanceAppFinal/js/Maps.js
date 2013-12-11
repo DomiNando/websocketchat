@@ -3,23 +3,26 @@
  */
 
 
- function Map() {
+function Map() {
 
- }
+}
 
 
 /**
  * Para desplegar el mapa, reciba posiciones y actualiza el mapa, también se llama la función que se encarga de colocar las rutas los
  * mapas.
  */
- Map.displayMap = function(position)
- {
-
+Map.displayMap = function()
+{
+    var positions = new Position();
+    var position = positions.getPositions();
     var userLatLng = null;
     var HospitalLatLng = [];
 
-    for(var i = 0; i < 2; i++){
-        if( i==1){
+    alert ("Position 0: "+ position[0].position.latitude);
+
+    for(var i = 0; i < 4; i++){
+        if( i==0){
             userLatLng = new google.maps.LatLng(position[i].position.latitude, position[i].position.longitude);
         }
         else{
@@ -51,7 +54,7 @@
     });
     var circle  = new google.maps.Circle({
         center: userLatLng,
-        radius: position[1].position.accuracy,
+        radius: position[0].position.accuracy,
         map: map,
         fillColor: '#70E7FF',
         fillOpacity: 0.2,
@@ -91,9 +94,6 @@
     for ( var i=0; i <5; i++){
         this.setRoute(new google.maps.DirectionsRenderer(options), userLatLng, HospitalLatLng[i]);
     }
-
-    $.mobile.loading('hide');
-
 }
 
 
@@ -105,8 +105,8 @@
  * @param HospitalLatLng
  */
 
- Map.setRoute = function(directionsDisplay, userLatLng, HospitalLatLng)
- {
+Map.setRoute = function(directionsDisplay, userLatLng, HospitalLatLng)
+{
     var directionsService = new google.maps.DirectionsService();
 
 
@@ -119,24 +119,23 @@
     };
 
     directionsService.route(
-                            request,
-                            function(response, status)
-                            {
-                                if (status == google.maps.DirectionsStatus.OK){
-                                    directionsDisplay.setDirections(response);
-                                    searchfor();
-                                }
+        request,
+        function(response, status)
+        {
+            if (status == google.maps.DirectionsStatus.OK){
+                directionsDisplay.setDirections(response);
+            }
 
-                                else
-                                {
-                                    navigator.notification.alert(
-                                                                 'Unable to retrieve a route to the Hospital. However, you can still find it by your own.',
-                                                                 function(){},
-                                                                 'Warning'
-                                                                 );
-                                }
-                            }
-                            );
+            else
+            {
+                navigator.notification.alert(
+                    'Unable to retrieve a route to the Hospital. However, you can still find it by your own.',
+                    function(){},
+                    'Warning'
+                );
+            }
+        }
+    );
 
 }
 
@@ -148,34 +147,34 @@
  * Esta información es necesaria para que en el servidor se localice los servicios que cubren el área donde se encuentra la persona
  * o los hospitales cerca de la zona.
  */
- Map.requestLocation = function(position, category)
- {
+Map.requestLocation = function(position, category)
+{
     new google.maps.Geocoder().geocode(
-    {
-        'location': new google.maps.LatLng(position[0].position.latitude, position[0].position.longitude)
-    },
-    function(results, status)
-    {
-        if (status == google.maps.GeocoderStatus.OK)
         {
-            var result = results[0];
-            var positions = new Position();
+            'location': new google.maps.LatLng(position[0].position.latitude, position[0].position.longitude)
+        },
+        function(results, status)
+        {
+            if (status == google.maps.GeocoderStatus.OK)
+            {
+                var result = results[0];
+                var positions = new Position();
 
-            var city = "";
-            var state = "";
-            var country = "";
-            for(var i=0, len=result.address_components.length; i<len; i++) {
-                var ac = result.address_components[i];
-                if(ac.types.indexOf("locality") >= 0) city = ac.long_name;
-                if(ac.types.indexOf("administrative_area_level_1") >= 0) state = ac.long_name;
-                if(ac.types.indexOf("country") >= 0) country = ac.long_name;
+                var city = "";
+                var state = "";
+                var country = "";
+                for(var i=0, len=result.address_components.length; i<len; i++) {
+                    var ac = result.address_components[i];
+                    if(ac.types.indexOf("locality") >= 0) city = ac.long_name;
+                    if(ac.types.indexOf("administrative_area_level_1") >= 0) state = ac.long_name;
+                    if(ac.types.indexOf("country") >= 0) country = ac.long_name;
+                }
+                positions.updatePosition(0, position[0].position, country, state, city, window.localStorage["username"]);
+                getlistofservices(category, position[0].position.latitude, position[0].position.longitude);
+
+
             }
-            positions.updatePosition(0, position[0].position, country, state, city, window.localStorage["username"]);
-            getlistofservices(category, position[0].position.latitude, position[0].position.longitude);
-
 
         }
-
-    }
     ); return position;
 }
