@@ -1,0 +1,65 @@
+Chat Code Explanation
+	The chat system is controlled via events: 
+When the mobile user connects to the chat, he/she will send a JSON format login event through the chat server, with a data that 
+includes the mobile user phone number. When the web user logs in to the web application, it sends an event called “login” through 
+the chat server through the login function in the ChatModels.js file. The data inside that login event message includes the web 
+user’s phone number and nickname. Upon receiving a connection, the chat server activates the respond function, and it receives a 
+connection object describing the information of the user connecting to the chat system. The chat server receives events in its 
+respond function, where it extracts the event data by parsing the JSON object into a data string, and determines it is a login 
+event. Afterwards, if the user logging in is a mobile user, the mobile user’s phone number is extracted from the message, and set 
+as that user’s username (in the case of the user being a mobile user, if not, the username is set as that user’s username in the 
+chat). After this point, the user is pushed into the list of users connected to the chat. The chat server then replies with a “user
+ok” event. 
+The mobile user receives this event in its onmessage function, and it parses the JSON Object contained in it. The mobile client 
+then replies with a “new chat” event, composed of a JSON Object with the phone number of the destination inside the data field. 
+That phone number is the phone number that was displayed in the Chat/Chat Next/Back Screen when the mobile user clicked the Chat 
+Button. It then proceeds to stringify the JSON Object and send it to the chat server. The chat server receives the “new chat” event
+and proceeds to parse it into a JSON Object, where it verifies if an agent is available for that specific phone number. Using a for
+each, the chat server proceeds to verify both if there is a user in the current chat list whose phonenumber property matches the 
+agency phone number being requested by the mobile user, and if that user’s available property is set to true. If it does not find a
+match, or if all the matches have the available property set to false, it returns false. When this happens, the chat server sends a JSON Object event called “no_users”, that does not include other data. The mobile client receives this event, and retries to send the “new chat” event a total of 3 times, if it succeeds in finding a user available for that number, the actions in the next paragraph are taken. If it fails in finding such user, it shows the mobile user an alert saying that no available users for that number were found, and the chat server will close.
+If it does find a match, it returns true. It then uses the getUserbyNumber function to get that matching user’s username. Using 
+that username, it searches for that user object in the users chat list, to gain access to all its properties. Afterwards, it sends 
+a “user_ready” event, along with that user’s username inside the data property of the JSON Object it is sending. Then, it sets that
+user’s available property to false, and it sends a “new chat” event, which includes the destination’s connection property inside 
+the data property of the JSON Object it is sending. The web client receives that “new chat” event, and it sets its destination to 
+the destination contained in the data field in the JSON Object it just received. It then sends a “request chat” event back to the 
+server, including the destination in the data field of that JSON Object. 
+The mobile client receives the “user_ready” event, to which it responds by setting that username returned by the chat server, as 
+the destination for the chat conversation. It then replies by sending an event called “requestChat”, with that user’s username in 
+the data property of the JSON Object it is sending.
+The chat server receives that “requestChat” event, and replies by checking if that request is not a self-chat request. If it is, it
+sends back an error saying that a user cannot chat with himself. If it is a legal chat request, and that user is in fact in the 
+users chat list, it sends back a “request ok” event with the requested user’s id in the data field of that JSON Object event.
+The web user receives the “request ok” event, and it sets the destination id to the id received in the data field of the “request 
+ok” JSON Object. The mobile user also receives the “request ok” event, and sets the destination id to the id received in the data 
+field of the “request ok” received.
+From now on, the action in the chat is controlled by button presses and keystrokes in both client sides. Whenever the mobile user 
+clicks on the Send Button in the Chat Screen, a message event is sent. This triggers a “message” event, which contains the mobile 
+user’s data in the data: message: field, as well as the id of the destination in the data:destinationId field.
+The chat server receives the “message” event, it creates the exact date (down to the second) of the message using the fullDate 
+function, and checks if there is a disconnection message in the data field of the event JSON Object. If there is, the message 
+turns into “has disconnected”, if there is not, the message remains the same. It retrieves the connection object of the destination.
+Then, it proceeds to send the message event with the added field username inside the event JSON Object to the connection object.
+The web client receives the “message event”, and it pushes its contents to the chat window stack (this posts the message within the
+ChatModel.js file. Whenever a web user introduces characters into the chat message-send form in the web page, the Chat View sends a
+“send-message” event (as long as the last key pressed by the user is the “Enter” key, and the message is not empty). The 
+chatController file listens and receives the “send-message” event, and activates the chatModel, which creates the current message 
+date (down to seconds), and creates a “message” event, along with the message in the data: message field, and the destination id 
+in the data: destinationId field. That JSON Object is then sent to the chat server using the sendMessage function.
+The chat server then proceeds to respond in the same way as if the mobile user was the one sending the message. If the mobile user 
+clicks the Cancel Button, a “message” event is sent to the chat server with a data: destinationId that includes the destination’s 
+id, as well as a data: available field set to true. The chat server receives the “message” event, and since there is a data: 
+available field, the message is set to “has disconnected” by the chat server, and it is sent just like a regular message would. 
+The web client also creates a JSON Object event called “set available”, with the destination id in the data: destinationId field, 
+and sends it. The chat server receives the “set available” event, and searches for the user destination in the users chat list, and
+sets its available property to true.
+The mobile client proceeds to send a close signal to the chat server. The chat server reacts to the close signal by searching for 
+the user requesting it in the users chat list by its userconnection property. If a match is found, that user is deleted from the 
+users chat list. When the web user clicks the Logout Button, the sessionStorage is cleared, and if the web user is connected in a 
+chat conversation with a mobile user, a “web disconnected” event JSON Object is created, with the destination id in the data: 
+destination field, and it is sent to the chat server. The chat server receives the “web disconnected” event, and proceeds to 
+search for the destination’s connection property using the getConnection function. Using that connection property, it sends the 
+event “web disconnect”.  The mobile user receives the “web disconnect” event, and proceeds to show an alert saying that the web 
+user has disconnected, and it closes the chat server after 3 seconds using a time out. After the conversation closes, the mobile 
+user is taken to the Chat/ Chat Next/ Back Button screen.

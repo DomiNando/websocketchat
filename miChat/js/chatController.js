@@ -1,101 +1,114 @@
-/*global ChatView, ChatModel, ChatStore */
+/*global ChatView, ChatModel, ChatStore, Stapes, $ */
 'use strict';
 
 // .bind shim for IE8
 if (!Function.prototype.bind) {
-    Function.prototype.bind = function(context) {
-        var self = this;
-        return function() {
-            return self.apply(context, arguments);
-        };
+  Function.prototype.bind = function (context) {
+    var self = this;
+    return function () {
+      return self.apply(context, arguments);
     };
+  };
 }
 
-var ChatController  = Stapes.subclass({
-    constructor: function(server, options) {
-        this.view = new ChatView();
-        this.store = new ChatStore();
-        this.model = new ChatModel(server, options, this.store.load());
 
-        this.bindEventHandlers();
+var ChatController = Stapes.subclass({
+  constructor: function (server, options) {
+    this.view = new ChatView();
+    this.store = new ChatStore();
+    this.model = new ChatModel(server, options, this.store.load());
 
-        // get initial state from view.
-        this.set('state', this.view.getState());
-    },
+    this.bindEventHandlers();
 
-    bindEventHandlers: function() {
+    // get initial state from view.
+    this.set('state', this.view.getState());
+  },
 
-        this.on({
-            'change:state': function(state) {
-                this.view.setActiveRoute(state);
-                this.renderAll();
-            }
-        });
 
-        // set model events listener
-        this.model.on({
-            'change': function() {
-                this.renderAll();
-            },
+//Handles events
+  bindEventHandlers: function () {
 
-            'close': function() {
-                this.model.server.close();
-            },
+//Handles a change:state event, by rendering the message
+    this.on({
+      'change:state': function (state) {
+        this.renderAll();
+      }
+    });
 
-            'error': function(err) {
-                console.log('[' + err.code + '] ' + err.message);
-            },
+    // set model events listener
+    this.model.on({
+      'change': function () {
+        this.renderAll();
+      },
 
-            'sosumi': function() {
-                console.log('Sorry Nayda');
-            },
+//Handles a close event by closing the server
+      'close': function () {
+        this.model.server.close();
+      },
 
-            'request ok': function() {
-                this.view.show();
-            },
+//Handles an erroe event by sending an error message with a code
+      'error': function (err) {
+        console.log('[' + err.code + '] ' + err.message);
+      },
 
-            'open': function() { //CAMBIE!!!!
-            	// this.model.login(this.phoneNumber, this.username); //cambie!!
-            	var _db = window.sessionStorage;
-            	var username = _db.getItem("username");
-            	var phonenumber = _db.getItem("agencyPhoneNumber");
-            	this.model.login(phonenumber, username);
-                //this.model.login(1234567890);
-            },
+//Easter Egg event that will never happen
+      'sosumi': function () {
+        console.log('Sorry Nayda');
+      },
 
-            'new message': function() {
-                this.renderAll();
-                console.log('new!');
-            }
-        }, this);
+//Handles a request ok event, by showing the chat window being functional
+      'request ok': function () {
+        this.view.show();
+      },
 
-        // set view events listenert
-        this.view.on({
-            'message-send': function(message) {
-                this.model.sendMessage(message);
-            },
+//Handles an open event, by setting the sessionStorage, username, and phonenumber
+      'open': function () { //CAMBIE!!!!
+        // this.model.login(this.phoneNumber, this.username); //cambie!!
+        var sstore = window.sessionStorage;
+        var username = sstore.getItem("username");
+        var phonenumber = sstore.getItem("agencyPhoneNumber");
+        this.model.login(phonenumber, username);
+      },
 
-            'statechange': function(state) {
-                this.set('state', state);
-            }
-        }, this);
+//Handles a new message event by rendering all messages in the stack
+      'new message': function () {
+        this.renderAll();
+        console.log('new!');
+      }
+    }, this);
 
-    },
+    // set view events listener
+    this.view.on({
+//Handles a message-send event by sending a message
+      'message-send': function (message) {
+        this.model.sendMessage(message);
+      },
 
-    renderAll: function() {
-        this.store.save(this.model.getMessages());
-        this.view.render(this.model.getMessages());
+//Handles a statechange event by setting the state to the parameter
+      'statechange': function (state) {
+        this.set('state', state);
+      }
+    }, this);
 
-        if (this.model.size() > 0) {
-            this.view.show();
-        } else {
-            this.view.hide();
-        }
-    },
-    
-    setUserNameAndPhoneNumber: function(username, phonenumber) {
-    	this.username = username;
-    	this.phonenumber = phonenumber;
-    
+  },
+
+//Renders the messages and scrolls down the message window when a new message is received
+  renderAll: function () {
+    this.store.save(this.model.getMessages());
+    this.view.render(this.model.getMessages());
+    $('#messages').scrollTop($('#messages')[0].scrollHeight);
+
+    if (this.model.size() > 0) {
+      this.view.show();
+    } else {
+      this.view.hideChat();
     }
+  },
+
+//Sets the username and phone number of a user to the parameters
+  setUserNameAndPhoneNumber: function (username, phonenumber) {
+    this.username = username;
+    this.phonenumber = phonenumber;
+
+  }
 });

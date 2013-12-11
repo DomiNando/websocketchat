@@ -1,92 +1,96 @@
-/*global jQuery, $, Handlebars */
+/*global jQuery, $, Handlebars, Stapes*/
 'use strict';
 
 var ChatView = Stapes.subclass({
-    constructor: function() {
-        this.bindEventHandlers();
-        this.loadTemplates();
-    }
+  constructor: function () {
+    this.bindEventHandlers();
+    this.loadTemplates();
+  }
 });
 
 ChatView.extend({
-    ENTER_KEY: 13,
-    message_template: '{{#messages}}<li class="{{class}} message"><div class="view"><div><label class="username">{{username}}</label><span>{{message}}</span></div></div></li>{{/messages}}'
+  ENTER_KEY: 13,
+  message_template: '{{#messages}}<li class="{{class}} message"><div class="view"><div><label class="username">{{username}}</label><span>{{message}}</span></div></div></li>{{/messages}}'
 });
 
 ChatView.proto({
-    bindEventHandlers: function() {
- 	console.log("Entro a Event Handlers!");
-        /*$('#submit').on('click',function(e) {
-            var message = $('#input input').val();
+//Handles the events received
+  bindEventHandlers: function () {
+    console.log("Entro a Event Handlers!");
 
-            console.log('length is ' + message.length);
-            if (message.length <= 160 && message !== '') {
-                this.emit('message-send', message);
-                this.clearInput(); 
-            }
-        }.bind(this)); */
+/*Handles the chat message input when receiving keystrokes from the user. It will send the message to the chat server on Enter key
+if the message is not empty*/
+    $('#input input').on('keyup', function (e) {
+      console.log("Entro a keyup!!");
+      var message = $.trim($(e.target).val().substr(0, 160));
+      $('#input input').css("background-color", "white");
 
-        $('#input input').on('keyup', function(e) {
-        	console.log("Entro a keyup!!");
-            var message = $.trim($(e.target).val());
-             $('#input input').css("background-color", "white");
+      if (e.which === ChatView.ENTER_KEY && message !== '') {
+        e.preventDefault();
+        this.emit('message-send', message);
+        this.clearInput();
+      }
+    }.bind(this));
 
-            if (e.which === ChatView.ENTER_KEY && message !== '') {
-                e.preventDefault();
-                this.emit('message-send', message);
-                this.clearInput();
-            }
-        }.bind(this));
+//When the minimize-chat button is clicked, it invokes the minimize() function
+    $('#minimize-chat').on('click', function () {
+      this.minimize();
+    }.bind(this));
 
-        $('#minimize-chat').on('click', function() {
-            this.minimize();
-        }.bind(this));
+//Not being used
+    $('#close-chat').on('click', function () {
+      this.hideChat();
+    }.bind(this));
 
-        $('#close-chat').on('click', function() {
-            this.hide();
-        }.bind(this));
+//When the page changes, it sends a statechange event
+    window.onhashchange = function () {
+      this.emit('statechange', this.getState());
+    }.bind(this)
+  },
 
-        window.onhashchange = function() {
-            this.emit('statechange', this.getState());
-        }.bind(this)
-    },
-
-    loadTemplates: function() {
+//Loads the chat templates
+  loadTemplates: function () {
     console.log("Entro a loadTemplates!");
-        this.template = Handlebars.compile(ChatView.message_template);
-    },
+    this.template = Handlebars.compile(ChatView.message_template);
+  },
 
-    render: function(messages) {
-        var html = this.template({ 'messages' : messages });
-        $('#messages').html(html);
-    },
+//Scrolls the chat window content down when a new message is received, and adds messages to chat window html
+  render: function (messages) {
+    var html = this.template({
+      'messages': messages
+    });
+    $('#messages').html(html);
 
-    show: function() {
-        $('#chat').show();
-        $('#content0').show();
-        $('#input').show();
-    },
+    // code to scroll the chat down on every new message or render.
+    $('#content0').scrollTop($('#content0')[0].scrollHeight);
+  },
 
-    hide: function() {
-        $('#chat-window').hide();
-    },
+//Shows all of the chat contents
+  show: function () {
+    $('#chat').show();
+    $('#content0').show();
+    $('#input').show();
+  },
 
-    minimize: function() {
-        $('#chat #content0').toggle();
-        $('#chat #input').toggle();
-    },
+//Not being used
+  hideChat: function () {
+    $('#chat-window').hide();
+  },
 
-    clearInput: function() {
-        $('#input input').val('');
-    },
+//Toggles the chat window size
+  minimize: function () {
+    $('#chat #content0').toggle();
+    $('#chat #input').toggle();
+  },
 
-    'getState': function() {
+//Clears the chat window content
+  clearInput: function () {
+    $('#input input').val('');
+  },
+
+//Gets the state of the window
+  'getState': function () {
     console.log("Entro a getState!");
-        return window.location.hash.replace('#/', '') || 'all';
-    },
-
-    'setActiveRoute': function(route) {
-    console.log("Entro a setActiveRoute");
-        $('#filters a').removeClass('selected').filter('[href="#/' + route + '"]').addClass('selected');
-    }
+    return window.location.hash.replace('#/', '') || 'all';
+  }
 });
